@@ -31,6 +31,69 @@ databench.on({ data: 'fps' }, fps => {
   document.getElementById('fps').innerHTML = fps.toFixed(1);
 });
 
+
+COCO_PERSON_SKELETON = [
+  [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13],
+  [6, 7], [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3],
+  [2, 4], [3, 5], [4, 6], [5, 7]];
+COLORS = [
+  '#001f3f',
+  '#0074D9',
+  '#7FDBFF',
+  '#39CCCC',
+  '#3D9970',
+  '#2ECC40',
+  '#01FF70',
+  '#FFDC00',
+  '#FF851B',
+  '#FF4136',
+  '#85144b',
+  '#F012BE',
+  '#B10DC9',
+  '#111111',
+  '#AAAAAA',
+  '#DDDDDD',
+];
+
+
+function drawSkeleton(keypoints, detection_id) {
+  // contextOut.font = "12px Arial";
+  // contextOut.fillText(`detection ${detection_id}`,
+  //                     keypoints[0][0] * canvasOut.width,
+  //                     keypoints[0][1] * canvasOut.height);
+
+  COCO_PERSON_SKELETON.forEach((joint_pair, connection_index) => {
+    const [joint1i, joint2i] = joint_pair;
+    console.log({joint1i, joint2i});
+    console.log({keypoints});
+    const joint1xyv = keypoints[joint1i - 1];
+    const joint2xyv = keypoints[joint2i - 1];
+    console.log({joint1xyv, joint2xyv});
+    const color = COLORS[connection_index % COLORS.length];
+    contextOut.strokeStyle = color;
+    contextOut.lineWidth = 5;
+    if (joint1xyv[2] < 0.05 || joint2xyv[2] < 0.05) return;
+
+    contextOut.beginPath();
+    contextOut.moveTo(joint1xyv[0] * canvasOut.width, joint1xyv[1] * canvasOut.height);
+    contextOut.lineTo(joint2xyv[0] * canvasOut.width, joint2xyv[1] * canvasOut.height);
+    contextOut.stroke();
+  });
+
+  keypoints.forEach((xyv, joint_id) => {
+    if (xyv[2] == 0.0) return;
+
+    console.log({detection_id, xyv, joint_id});
+    contextOut.fillStyle = '#ffffff';
+    contextOut.arcTo(xyv[0] * canvasOut.width,
+                     xyv[1] * canvasOut.height,
+                     2,
+                     0,
+                     2 * Math.PI);
+  });
+}
+
+
 databench.on('keypoints', ({keypoint_sets, image_id}) => {
   console.log({keypoint_sets, image_id});
   captureBuffer.forEach(b => {
@@ -38,22 +101,7 @@ databench.on('keypoints', ({keypoint_sets, image_id}) => {
       let i = new Image();
       i.onload = () => {
         contextOut.drawImage(i, 0, 0, canvasOut.width, canvasOut.height);
-        keypoint_sets.forEach(({keypoints, detection_id}) => {
-          contextOut.font = "12px Arial";
-          contextOut.fillText(`detection ${detection_id}`,
-                              keypoints[0][0] * canvasOut.width,
-                              keypoints[0][1] * canvasOut.height);
-
-          keypoints.forEach((xyv, joint_id) => {
-            if (xyv[2] == 0.0) return;
-
-            console.log({detection_id, xyv, joint_id});
-            contextOut.fillStyle = '#0000ff';
-            contextOut.fillRect(xyv[0] * canvasOut.width - 2,
-                                xyv[1] * canvasOut.height - 2,
-                                4, 4);
-          });
-        });
+        keypoint_sets.forEach(({keypoints, detection_id}) => drawSkeleton(keypoints, detection_id));
       };
       i.src = b.image;
     }
