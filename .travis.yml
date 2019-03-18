@@ -18,6 +18,6 @@ install:
  - mkdir -p ~/.torch/models
  - cd ~/.torch/models; wget -nc https://documents.epfl.ch/users/k/kr/kreiss/www/resnet50block5-pif-paf-edge401-190315-214317-8c9fbafe.pkl; cd -
 script:
-#  - pylint openpifpafwebdemo --disable=fixme
+ - pylint openpifpafwebdemo --disable=fixme
  - npm run lint
  - npm run test
