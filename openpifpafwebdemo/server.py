@@ -66,6 +66,8 @@ class Demo(databench.Analysis):
         # with open('test_image.txt', 'w') as f:
         #     f.write(image)
         results = PROCESSOR_SINGLETON.single_image(image, self.data['resolution'])
+        yield self.emit('idle')
+
         for keypoint_sets, scores in results:
             self.emit('keypoints', {
                 'keypoint_sets': [{
@@ -75,9 +77,6 @@ class Demo(databench.Analysis):
                 }  for i, (kps, score) in enumerate(zip(keypoint_sets, scores))],
                 'image_id': image_id,
             })
-
-        # yield self.emit('log', {'action': 'done'})
-        yield self.emit('idle')
 
         new_fps = 0.5 * self.data['fps'] + 0.5 * (1.0 / (time.time() - self.data['last_frame']))
         yield self.data.set_state(fps=new_fps, last_frame=time.time())
