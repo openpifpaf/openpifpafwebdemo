@@ -4,7 +4,8 @@
   "description": "JavaScript part of OpenPifPafWebDemo.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && mocha -t 5000 js/build/commonjs/test.js",
+    "lint": "tslint -c tslint.json js/src/*.ts"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,14 @@
   },
   "homepage": "https://github.com/vita-epfl/openpifpafwebdemo#readme",
   "dependencies": {
-    "chai": "^4.2.0"
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "@types/request": "^2.48.1",
+    "chai": "^4.2.0",
+    "child_process": "^1.0.2",
+    "mocha": "^6.0.2",
+    "request": "^2.88.0",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.3333"
   }
 }

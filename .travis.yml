@@ -8,5 +8,9 @@ install:
  - pip install --upgrade pip setuptools
  - pip install --upgrade numpy cython
  - "pip install ."
+ - node -v
+ - npm install
 script:
  - pylint openpifpafwebdemo --disable=fixme
+ - npm run lint
+ - npm run test
