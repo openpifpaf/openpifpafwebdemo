@@ -1,5 +1,7 @@
 Work in progress ...
 
+[![Build Status](https://travis-ci.org/vita-epfl/openpifpafwebdemo.svg?branch=master)](https://travis-ci.org/vita-epfl/openpifpafwebdemo)
+
 # Getting Started
 
 ```sh
