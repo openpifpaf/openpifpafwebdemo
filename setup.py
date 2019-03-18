@@ -20,6 +20,7 @@ setup(
     author='Sven Kreiss',
     author_email='research@svenkreiss.com',
     url='https://github.com/vita-epfl/openpifpafwebdemo',
+    include_package_data=True,
 
     install_requires=[
         'openpifpaf>=0.2.2',
