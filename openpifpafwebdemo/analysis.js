@@ -37,22 +37,26 @@ COCO_PERSON_SKELETON = [
   [6, 7], [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3],
   [2, 4], [3, 5], [4, 6], [5, 7]];
 COLORS = [
-  '#001f3f',
-  '#0074D9',
-  '#7FDBFF',
-  '#39CCCC',
-  '#3D9970',
-  '#2ECC40',
-  '#01FF70',
-  '#FFDC00',
-  '#FF851B',
-  '#FF4136',
-  '#85144b',
-  '#F012BE',
-  '#B10DC9',
-  '#111111',
-  '#AAAAAA',
-  '#DDDDDD',
+  "#1f77b4",
+  "#aec7e8",
+  "#ff7f0e",
+  "#ffbb78",
+  "#2ca02c",
+  "#98df8a",
+  "#d62728",
+  "#ff9896",
+  "#9467bd",
+  "#c5b0d5",
+  "#8c564b",
+  "#c49c94",
+  "#e377c2",
+  "#f7b6d2",
+  "#7f7f7f",
+  "#c7c7c7",
+  "#bcbd22",
+  "#dbdb8d",
+  "#17becf",
+  "#9edae5",
 ];
 
 
@@ -81,15 +85,17 @@ function drawSkeleton(keypoints, detection_id) {
   });
 
   keypoints.forEach((xyv, joint_id) => {
-    if (xyv[2] == 0.0) return;
+    if (xyv[2] < 0.05) return;
 
     console.log({detection_id, xyv, joint_id});
+    contextOut.beginPath();
     contextOut.fillStyle = '#ffffff';
-    contextOut.arcTo(xyv[0] * canvasOut.width,
-                     xyv[1] * canvasOut.height,
-                     2,
-                     0,
-                     2 * Math.PI);
+    contextOut.arc(xyv[0] * canvasOut.width,
+                   xyv[1] * canvasOut.height,
+                   2,
+                   0,
+                   2 * Math.PI);
+    contextOut.fill();
   });
 }
 
@@ -118,6 +124,6 @@ function newImage() {
 }
 
 databench.on('idle', newImage);
-captureButton.addEventListener('click', newImage);
 
 databench.connect();
+newImage();  // kick it off

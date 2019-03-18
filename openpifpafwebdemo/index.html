@@ -8,11 +8,10 @@
 
 {% block analysis %}
 <div>
-    <video id="video" controls autoplay></video>
+    <video id="video" style="display: none" controls autoplay></video>
     <canvas id="canvas-capture" style="display: none" width=640 height=480></canvas>
     <canvas id="canvas-out" width=320 height=240></canvas>
     <br />
-    <button id="capture" class="btn btn-primary">Capture</button>
     <label for="resolution">Resolution:</label>
     <input type="range" id="resolution" value="10" min="10" max="200" step="5" />
 </div>
@@ -20,6 +19,10 @@
 <div style="font-size: 200%">
     FPS = <em><span id="fps">0</span></em>
 </div>
+{% end %}
+
+
+{% block log %}
 {% end %}
 
 
