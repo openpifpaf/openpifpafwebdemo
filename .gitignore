@@ -3,6 +3,7 @@ venv*/
 *.egg-info/
 __pycache__/
 *.pyc
+dist/
 
 # JavaScript
 node_modules/
