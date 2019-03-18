@@ -4,7 +4,7 @@
   "description": "JavaScript part of OpenPifPafWebDemo.",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && mocha -t 5000 js/build/commonjs/test.js",
+    "test": "tsc && mocha -t 10000 js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts"
   },
   "repository": {

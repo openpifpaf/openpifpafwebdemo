@@ -6,6 +6,8 @@ import * as fs from 'fs';
 
 describe('Server Process', () => {
   let databench_process_return_code = -42;
+
+  // spawn the server process
   let envVars = process.env;
   envVars.PORT = '5002';
   const databench_process = child_process.spawn('python', [
@@ -13,6 +15,8 @@ describe('Server Process', () => {
   ], {
       env: envVars,
   });
+
+  // configure process
   expect(databench_process).to.not.equal(null);
   expect(databench_process.stdout).to.not.equal(null);
   if (databench_process.stdout == null) return;
@@ -29,7 +33,7 @@ describe('Server Process', () => {
     setTimeout(() => {
       expect(databench_process_return_code).to.equal(-42);
       done();
-    }, 2000);
+    }, 5000);
   });
 
   after(done => {
