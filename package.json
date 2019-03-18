@@ -1,0 +1,22 @@
+{
+  "name": "openpifpafwebdemo-js",
+  "version": "0.1.0",
+  "description": "JavaScript part of OpenPifPafWebDemo.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vita-epfl/openpifpafwebdemo.git"
+  },
+  "author": "Sven Kreiss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vita-epfl/openpifpafwebdemo/issues"
+  },
+  "homepage": "https://github.com/vita-epfl/openpifpafwebdemo#readme",
+  "dependencies": {
+    "chai": "^4.2.0"
+  }
+}
