@@ -10,9 +10,9 @@ install:
  - "pip install .[test]"
  - node -v
  - npm install
- # download model
+ # prefetch model
  - mkdir -p ~/.torch/models
- - cd ~/.torch/models; wget https://documents.epfl.ch/users/k/kr/kreiss/www/resnet50block5-pif-paf-edge401-190315-214317-8c9fbafe.pkl
+ - cd ~/.torch/models; wget https://documents.epfl.ch/users/k/kr/kreiss/www/resnet50block5-pif-paf-edge401-190315-214317-8c9fbafe.pkl; cd -
 script:
 #  - pylint openpifpafwebdemo --disable=fixme
  - npm run lint
