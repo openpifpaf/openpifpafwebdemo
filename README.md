@@ -2,14 +2,16 @@ Work in progress ...
 
 # Getting Started
 
-Download a pre-trained model from [Google Drive](https://drive.google.com/drive/folders/1v8UNDjZbqeMZY64T33tSDOq1jtcBJBy7). Then:
-
 ```sh
-pip install -r requirements.txt
-python openpifpafwebdemo/web.py --checkpoint resnet50block5-pif-paf-edge401-190225-112156.pkl
+pip install --upgrade pip setuptools  # making sure your Python is up-to-date
+pip install cython numpy
+pip install openpifpafwebdemo
+python -m openpifpafwebdemo.server
 ```
 
 Open a web browser at `http://localhost:5000` to view the web interface.
+
+To install from source and set up for development use `pip install -e ".[test]"`.
 
 
 # API

@@ -1,5 +1,12 @@
 # Python
 venv*/
+*.egg-info/
+__pycache__/
+*.pyc
+
+# JavaScript
+node_modules/
+js/build/
 
 # data
 *.pkl

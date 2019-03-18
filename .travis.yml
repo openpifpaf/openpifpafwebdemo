@@ -1,5 +1,9 @@
 dist: xenial
 language: python
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.torch/models
 python:
  - "3.5"
  - "3.6"
@@ -7,6 +11,13 @@ python:
 install:
  - pip install --upgrade pip setuptools
  - pip install --upgrade numpy cython
- - "pip install ."
+ - "pip install --upgrade .[test]"
+ - node -v
+ - npm install
+ # prefetch model
+ - mkdir -p ~/.torch/models
+ - cd ~/.torch/models; wget -nc https://documents.epfl.ch/users/k/kr/kreiss/www/resnet50block5-pif-paf-edge401-190315-214317-8c9fbafe.pkl; cd -
 script:
  - pylint openpifpafwebdemo --disable=fixme
+ - npm run lint
+ - npm run test
