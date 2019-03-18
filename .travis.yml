@@ -7,7 +7,7 @@ python:
 install:
  - pip install --upgrade pip setuptools
  - pip install --upgrade numpy cython
- - "pip install ."
+ - "pip install .[test]"
  - node -v
  - npm install
 script:
