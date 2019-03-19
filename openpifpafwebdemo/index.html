@@ -8,12 +8,14 @@
 
 {% block analysis %}
 <div>
-    <video id="video" style="display: none" controls autoplay></video>
+  <div>
+    <video id="video" style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
     <canvas id="canvas-capture" style="display: none" width=640 height=480></canvas>
     <canvas id="canvas-out" width=320 height=240></canvas>
-    <br />
-    <label for="resolution">Resolution:</label>
-    <input type="range" id="resolution" value="10" min="10" max="200" step="5" />
+  </div>
+  <br />
+  <label for="resolution">Resolution:</label>
+  <input type="range" id="resolution" value="10" min="10" max="200" step="5" />
 </div>
 
 <div style="font-size: 200%">
