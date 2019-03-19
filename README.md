@@ -17,7 +17,7 @@ Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arX
 
 # Getting Started
 
-Make sure you have the latest pip and setuptools with `pip install --upgrade pip setuptools`.
+Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`.
 
 ```sh
 pip install openpifpafwebdemo
