@@ -68,11 +68,8 @@ function drawSkeleton(keypoints, detection_id) {
 
   COCO_PERSON_SKELETON.forEach((joint_pair, connection_index) => {
     const [joint1i, joint2i] = joint_pair;
-    console.log({joint1i, joint2i});
-    console.log({keypoints});
     const joint1xyv = keypoints[joint1i - 1];
     const joint2xyv = keypoints[joint2i - 1];
-    console.log({joint1xyv, joint2xyv});
     const color = COLORS[connection_index % COLORS.length];
     contextOut.strokeStyle = color;
     contextOut.lineWidth = 5;
@@ -87,7 +84,6 @@ function drawSkeleton(keypoints, detection_id) {
   keypoints.forEach((xyv, joint_id) => {
     if (xyv[2] < 0.05) return;
 
-    console.log({detection_id, xyv, joint_id});
     contextOut.beginPath();
     contextOut.fillStyle = '#ffffff';
     contextOut.arc(xyv[0] * canvasOut.width,
@@ -101,7 +97,6 @@ function drawSkeleton(keypoints, detection_id) {
 
 
 databench.on('keypoints', ({keypoint_sets, image_id}) => {
-  console.log({keypoint_sets, image_id});
   captureBuffer.forEach(b => {
     if (b.image_id == image_id) {
       let i = new Image();
