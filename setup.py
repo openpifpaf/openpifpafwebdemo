@@ -23,7 +23,7 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'openpifpaf>=0.2.2',
+        'openpifpaf>=0.2.3',
         'databench',
     ],
     extras_require={
