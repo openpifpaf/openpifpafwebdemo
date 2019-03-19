@@ -17,9 +17,9 @@ Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arX
 
 # Getting Started
 
+Make sure you have the latest pip and setuptools with `pip install --upgrade pip setuptools`.
+
 ```sh
-pip install --upgrade pip setuptools  # making sure your Python is up-to-date
-pip install cython numpy
 pip install openpifpafwebdemo
 python -m openpifpafwebdemo.server
 ```
@@ -31,7 +31,7 @@ __Example__: ResNet-50 on a laptop without GPU acceleration running at 5.1 FPS.
 <img src="docs/example.png" height=250 alt="example image" />
 
 
-To install from source and set up for development use `pip install -e ".[test]"`.
+To install from source and set up for development use `pip install --editable ".[test]"`.
 
 
 # API
