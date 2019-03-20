@@ -109,14 +109,19 @@ def main():
     global PROCESSOR_SINGLETON  # pylint: disable=global-statement
 
     parser = argparse.ArgumentParser()
-    openpifpaf.decoder.cli(parser, force_complete_pose=False)
+    openpifpaf.decoder.cli(parser, force_complete_pose=False, instance_threshold=0.05)
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
     parser.add_argument('--figure-width', default=10.0, type=float,
                         help='figure width')
     args = parser.parse_args()
+
+    # add args.device
     args.device = torch.device('cpu')
+    if not args.disable_cuda and torch.cuda.is_available():
+        args.device = torch.device('cuda')
+
     PROCESSOR_SINGLETON = Processor(args)
 
     databench.run(Demo, __file__,

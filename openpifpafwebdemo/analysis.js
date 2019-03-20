@@ -73,7 +73,7 @@ function drawSkeleton(keypoints, detection_id) {
     const color = COLORS[connection_index % COLORS.length];
     contextOut.strokeStyle = color;
     contextOut.lineWidth = 5;
-    if (joint1xyv[2] < 0.05 || joint2xyv[2] < 0.05) return;
+    if (joint1xyv[2] == 0.0 || joint2xyv[2] == 0.0) return;
 
     contextOut.beginPath();
     contextOut.moveTo(joint1xyv[0] * canvasOut.width, joint1xyv[1] * canvasOut.height);
@@ -82,7 +82,7 @@ function drawSkeleton(keypoints, detection_id) {
   });
 
   keypoints.forEach((xyv, joint_id) => {
-    if (xyv[2] < 0.05) return;
+    if (xyv[2] == 0.0) return;
 
     contextOut.beginPath();
     contextOut.fillStyle = '#ffffff';
