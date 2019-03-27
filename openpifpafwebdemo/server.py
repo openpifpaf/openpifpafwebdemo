@@ -113,8 +113,6 @@ def main():
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
-    parser.add_argument('--figure-width', default=10.0, type=float,
-                        help='figure width')
     args = parser.parse_args()
 
     # add args.device
@@ -125,7 +123,7 @@ def main():
     PROCESSOR_SINGLETON = Processor(args)
 
     databench.run(Demo, __file__,
-                  info={'title': 'OpenPifPaf Demo'},
+                  info={'title': 'OpenPifPafWebDemo'},
                   static={r'(analysis\.js)': '.'},
                   extra_routes=[('process', PostHandler, None)])
 
