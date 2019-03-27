@@ -18,7 +18,7 @@ const captureButton = document.getElementById('capture');
 let captureCounter = 0;
 let captureBuffer = [];
 
-const capabilities = { audio: false, video: { width: 640, height: 480 } };
+const capabilities = { audio: false, video: { width: 320, height: 240 } };
 navigator.mediaDevices.getUserMedia(capabilities).then(
   (stream) => video.srcObject = stream
 );
