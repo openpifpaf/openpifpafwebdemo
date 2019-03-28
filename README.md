@@ -20,8 +20,8 @@ Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arX
 Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
 
 ```sh
-pip install openpifpafwebdemo
-python -m openpifpafwebdemo.server
+pip3 install openpifpafwebdemo
+python3 -m openpifpafwebdemo.server
 ```
 
 Open a web browser at `http://localhost:5000` to view the web interface.

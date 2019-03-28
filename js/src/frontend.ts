@@ -1,22 +1,20 @@
-/* global Databench */
 /* global document */
 
-const backend_location = (document.location.search && document.location.search[0] == '?') ? document.location.search.substr(1) : undefined;
+let backend_location = (document.location.search && document.location.search[0] == '?') ? document.location.search.substr(1) : '';
+if (!backend_location && document.location.hostname == 'github') {
+  backend_location = 'https://vitapc11.epfl.ch';
+}
 
-const databench = new Databench.Connection(backend_location);
-Databench.ui.wire(databench);
-document.getElementById('resolution').databenchUI.sliderToValue = v => v / 100.0;
-document.getElementById('resolution').databenchUI.valueToSlider = v => v * 100.0;
-document.getElementById('resolution').databenchUI.formatFn = v => `${(v * 100).toFixed(0)}%`;
-
-const video = document.getElementById('video');
-const canvasCapture = document.getElementById('canvas-capture');
+const video = <HTMLVideoElement>document.getElementById('video');
+const canvasCapture = <HTMLCanvasElement>document.getElementById('canvas-capture');
 const contextCapture = canvasCapture.getContext('2d');
-const canvasOut = document.getElementById('canvas-out');
+const canvasOut = <HTMLCanvasElement>document.getElementById('canvas-out');
 const contextOut = canvasOut.getContext('2d');
-const captureButton = document.getElementById('capture');
+const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
 let captureCounter = 0;
-let captureBuffer = [];
+let fps = 0.0;
+let lastProcessing: number = null;
+
 
 const capabilities = { audio: false, video: { width: 640, height: 480 } };
 navigator.mediaDevices.getUserMedia(capabilities).then(
@@ -24,21 +22,11 @@ navigator.mediaDevices.getUserMedia(capabilities).then(
 );
 
 
-databench.on({ data: 'pi' }, (pi) => {
-  document.getElementById('pi').innerHTML =
-    `${pi.estimate.toFixed(3)} ± ${pi.uncertainty.toFixed(3)}`;
-});
-
-databench.on({ data: 'fps' }, fps => {
-  document.getElementById('fps').innerHTML = fps.toFixed(1);
-});
-
-
-COCO_PERSON_SKELETON = [
+const COCO_PERSON_SKELETON = [
   [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13],
   [6, 7], [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3],
   [2, 4], [3, 5], [4, 6], [5, 7]];
-COLORS = [
+const COLORS = [
   "#1f77b4",
   "#aec7e8",
   "#ff7f0e",
@@ -67,6 +55,7 @@ function drawSkeleton(keypoints, detection_id) {
   // contextOut.fillText(`detection ${detection_id}`,
   //                     keypoints[0][0] * canvasOut.width,
   //                     keypoints[0][1] * canvasOut.height);
+  console.log({keypoints, detection_id});
 
   COCO_PERSON_SKELETON.forEach((joint_pair, connection_index) => {
     const [joint1i, joint2i] = joint_pair;
@@ -98,29 +87,39 @@ function drawSkeleton(keypoints, detection_id) {
 }
 
 
-databench.on('keypoints', ({keypoint_sets, image_id}) => {
-  captureBuffer.forEach(b => {
-    if (b.image_id == image_id) {
-      let i = new Image();
-      i.onload = () => {
-        contextOut.drawImage(i, 0, 0, canvasOut.width, canvasOut.height);
-        keypoint_sets.forEach(({keypoints, detection_id}) => drawSkeleton(keypoints, detection_id));
-      };
-      i.src = b.image;
-    }
-  });
-  captureBuffer = captureBuffer.filter(b => b.image_id >= image_id);
-});
-
-
-function newImage() {
+export function newImage() {
   contextCapture.drawImage(video, 0, 0, canvasCapture.width, canvasCapture.height);
   captureCounter += 1;
-  databench.emit('image', {image_id: captureCounter, image: canvasCapture.toDataURL()});
-  captureBuffer.push({image_id: captureCounter, image: canvasCapture.toDataURL()});
+  const data = {image_id: captureCounter, image: canvasCapture.toDataURL()};
+
+  let xhr = new XMLHttpRequest();
+  xhr.open('POST', backend_location + '/process', true);
+  xhr.onload = function() {
+    if (lastProcessing != null) {
+      const duration = Date.now() - lastProcessing;
+      fps = 0.9 * fps + 0.1 * (1000.0 / duration);
+      fpsSpan.textContent = `${fps.toFixed(1)}`;
+    }
+    lastProcessing = Date.now();
+    newImage();
+    const body = JSON.parse(this['responseText']);
+    const scores = body.map((entry: any) => entry.score);
+
+    // console.log({'canvaswidth': [canvasOut.clientWidth, canvasOut.scrollWidth], 'videoheight': video.videoHeight, 'videowidth': video.videoWidth});
+    const targetHeight = Math.round(canvasOut.clientWidth * video.videoHeight / video.videoWidth);
+    if (canvasOut.clientHeight != targetHeight) {
+      canvasOut.height = targetHeight;
+    }
+    // console.log({r: Math.round(canvasOut.clientWidth * video.videoHeight / video.videoWidth), canvasheight: canvasOut.height});
+    let i = new Image();
+    i.onload = () => {
+      contextOut.drawImage(i, 0, 0, canvasOut.width, canvasOut.height);
+      body.forEach((entry: any) => drawSkeleton(entry.coordinates, entry.detection_id));
+    };
+    i.src = data.image;
+  };
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify(data));
 }
 
-databench.on('idle', newImage);
-
-databench.connect();
 newImage();  // kick it off

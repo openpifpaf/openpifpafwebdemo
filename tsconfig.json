@@ -3,9 +3,9 @@
         "module": "commonjs",
         "target": "es5",
         "lib": ["dom", "es2015.promise", "es5"],
-        "noImplicitAny": true,
+        // "noImplicitAny": true,
         "suppressImplicitAnyIndexErrors": true,
-        "strictNullChecks": true,
+        // "strictNullChecks": true,
         "sourceMap": true,
         "outDir": "js/build/commonjs",
         "declaration": true

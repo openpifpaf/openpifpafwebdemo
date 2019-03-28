@@ -4,6 +4,7 @@
   "description": "JavaScript part of OpenPifPafWebDemo.",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "test": "tsc && mocha -t 10000 js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts"
   },
@@ -18,14 +19,21 @@
   },
   "homepage": "https://github.com/vita-epfl/openpifpafwebdemo#readme",
   "dependencies": {
+    "@babel/core": "^7.4.0",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",
     "@types/request": "^2.48.1",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "child_process": "^1.0.2",
     "mocha": "^6.0.2",
     "request": "^2.88.0",
+    "source-map-loader": "^0.2.4",
     "tslint": "^5.14.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   }
 }
