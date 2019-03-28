@@ -100,7 +100,7 @@ class PostHandler(RequestHandler):
         self.finish()
 
 
-async def grep_static(url='http://127.0.0.1:5000', dest='static/index.html'):
+async def grep_static(url='http://127.0.0.1:5000', dest='openpifpafwebdemo/static/index.html'):
     http_client = tornado.httpclient.AsyncHTTPClient()
     try:
         response = await http_client.fetch(url)
@@ -123,7 +123,7 @@ def main():
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
-    parser.add_argument('--resolution', default=0.5, type=float)
+    parser.add_argument('--resolution', default=0.3, type=float)
     parser.add_argument('--grep-static', default=False, action='store_true')
     args = parser.parse_args()
 
@@ -141,7 +141,7 @@ def main():
     tornado.autoreload.watch('openpifpafwebdemo/analysis.js')
     databench.run(Demo, __file__,
                   info={'title': 'OpenPifPafWebDemo'},
-                  static={r'(analysis\.js.*)': '.', r'static/(.*)': '../static'},
+                  static={r'(analysis\.js.*)': '.', r'static/(.*)': 'openpifpafwebdemo/static'},
                   extra_routes=[('process', PostHandler, None)])
 
 

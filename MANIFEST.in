@@ -1,2 +1,4 @@
 include openpifpafwebdemo/analysis.js
 include openpifpafwebdemo/index.html
+recursive-include openpifpafwebdemo/static *.js *.js.map *.html
+recursive-include openpifpafwebdemo/static/_static *.css *.ico *.svg

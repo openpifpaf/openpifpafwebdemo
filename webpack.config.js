@@ -1,6 +1,6 @@
 module.exports = [
 
-// for output to static/analysis.js
+// for output to openpifpafwebdemo/static/analysis.js
 {
   mode: 'production',
   context: __dirname,
@@ -11,7 +11,7 @@ module.exports = [
     path: __dirname,
     library: 'openpifpafwebdemo',
     libraryTarget: 'umd',
-    filename: 'static/analysis.js',
+    filename: 'openpifpafwebdemo/static/analysis.js',
   },
 
   devtool: 'source-map',

@@ -97,7 +97,7 @@ export function newImage() {
   xhr.onload = function() {
     if (lastProcessing != null) {
       const duration = Date.now() - lastProcessing;
-      fps = 0.9 * fps + 0.1 * (1000.0 / duration);
+      fps = 0.5 * fps + 0.5 * (1000.0 / duration);
       fpsSpan.textContent = `${fps.toFixed(1)}`;
     }
     lastProcessing = Date.now();
