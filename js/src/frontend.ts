@@ -1,7 +1,7 @@
 /* global document */
 
-let backend_location = (document.location.search && document.location.search[0] == '?') ? document.location.search.substr(1) : '';
-if (!backend_location && document.location.hostname == 'vita-epfl.github.io') {
+let backend_location = (document.location.search && document.location.search[0] === '?') ? document.location.search.substr(1) : '';
+if (!backend_location && document.location.hostname === 'vita-epfl.github.io') {
   backend_location = 'https://vitapc11.epfl.ch';
 }
 
@@ -27,26 +27,26 @@ const COCO_PERSON_SKELETON = [
   [6, 7], [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3],
   [2, 4], [3, 5], [4, 6], [5, 7]];
 const COLORS = [
-  "#1f77b4",
-  "#aec7e8",
-  "#ff7f0e",
-  "#ffbb78",
-  "#2ca02c",
-  "#98df8a",
-  "#d62728",
-  "#ff9896",
-  "#9467bd",
-  "#c5b0d5",
-  "#8c564b",
-  "#c49c94",
-  "#e377c2",
-  "#f7b6d2",
-  "#7f7f7f",
-  "#c7c7c7",
-  "#bcbd22",
-  "#dbdb8d",
-  "#17becf",
-  "#9edae5",
+  '#1f77b4',
+  '#aec7e8',
+  '#ff7f0e',
+  '#ffbb78',
+  '#2ca02c',
+  '#98df8a',
+  '#d62728',
+  '#ff9896',
+  '#9467bd',
+  '#c5b0d5',
+  '#8c564b',
+  '#c49c94',
+  '#e377c2',
+  '#f7b6d2',
+  '#7f7f7f',
+  '#c7c7c7',
+  '#bcbd22',
+  '#dbdb8d',
+  '#17becf',
+  '#9edae5',
 ];
 
 
@@ -64,7 +64,7 @@ function drawSkeleton(keypoints, detection_id) {
     const color = COLORS[connection_index % COLORS.length];
     contextOut.strokeStyle = color;
     contextOut.lineWidth = 5;
-    if (joint1xyv[2] == 0.0 || joint2xyv[2] == 0.0) return;
+    if (joint1xyv[2] === 0.0 || joint2xyv[2] === 0.0) return;
 
     contextOut.beginPath();
     contextOut.moveTo(joint1xyv[0] * canvasOut.width, joint1xyv[1] * canvasOut.height);
@@ -73,7 +73,7 @@ function drawSkeleton(keypoints, detection_id) {
   });
 
   keypoints.forEach((xyv, joint_id) => {
-    if (xyv[2] == 0.0) return;
+    if (xyv[2] === 0.0) return;
 
     contextOut.beginPath();
     contextOut.fillStyle = '#ffffff';
@@ -107,7 +107,7 @@ export function newImage() {
 
     // console.log({'canvaswidth': [canvasOut.clientWidth, canvasOut.scrollWidth], 'videoheight': video.videoHeight, 'videowidth': video.videoWidth});
     const targetHeight = Math.round(canvasOut.clientWidth * video.videoHeight / video.videoWidth);
-    if (canvasOut.clientHeight != targetHeight) {
+    if (canvasOut.clientHeight !== targetHeight) {
       canvasOut.height = targetHeight;
     }
     // console.log({r: Math.round(canvasOut.clientWidth * video.videoHeight / video.videoWidth), canvasheight: canvasOut.height});
