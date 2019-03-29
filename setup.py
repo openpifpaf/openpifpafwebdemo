@@ -24,7 +24,7 @@ setup(
 
     install_requires=[
         'openpifpaf>=0.2.3',
-        'databench>=0.7.2',
+        'databench>=0.7.3',
     ],
     extras_require={
         'test': [
