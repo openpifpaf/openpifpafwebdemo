@@ -102,16 +102,12 @@ class PostHandler(RequestHandler):
 
 async def grep_static(url='http://127.0.0.1:5000', dest='openpifpafwebdemo/static/index.html'):
     http_client = tornado.httpclient.AsyncHTTPClient()
-    try:
-        response = await http_client.fetch(url)
-    except Exception as e:
-        print("Error: %s" % e)
-    else:
-        out = response.body.decode()
-        out = out.replace('="/_static', '="_static')
-        out = out.replace('href="/"', 'href="/openpifpafwebdemo"')
-        with open(dest, 'w') as f:
-            f.write(out)
+    response = await http_client.fetch(url)
+    out = response.body.decode()
+    out = out.replace('="/_static', '="_static')
+    out = out.replace('href="/"', 'href="/openpifpafwebdemo"')
+    with open(dest, 'w') as f:
+        f.write(out)
     http_client.close()
 
 
