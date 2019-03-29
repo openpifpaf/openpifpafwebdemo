@@ -2,24 +2,22 @@
 
 
 {% block head %}
-<link rel="stylesheet" href="/_static/databench.css?v={{databench_version}}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="_static/databench.css?v={{databench_version}}">
 {% end %}
 
 
 {% block analysis %}
 <div>
-  <div>
-    <video id="video" style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
-    <canvas id="canvas-capture" style="display: none" width=640 height=480></canvas>
-    <canvas id="canvas-out" width=320 height=240></canvas>
-  </div>
-  <br />
-  <label for="resolution">Resolution:</label>
-  <input type="range" id="resolution" value="10" min="10" max="200" step="5" />
+  <video id="video" style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
+  <canvas id="canvas-capture" style="display: none" width=640 height=480></canvas>
+  <canvas id="canvas-out" style="max-width:100%;" width=320 height=240></canvas>
 </div>
 
 <div style="font-size: 200%">
-    FPS = <em><span id="fps">0</span></em>
+  FPS = <em><span id="fps">0</span></em>
 </div>
 {% end %}
 
@@ -29,8 +27,8 @@
 
 
 {% block footer %}
-<script src="/_static/databench.js?v={{databench_version}}"></script>
-<script src="/analysis.js?v={{version}}"></script>
+<a href="//www.epfl.ch/about/overview/overview/regulations-and-guidelines/">EPFL Legal</a>
 
-<a href="https://www.epfl.ch/about/overview/overview/regulations-and-guidelines/">EPFL Legal</a>
+<script src="//webrtc.github.io/adapter/adapter-latest.js" type="text/javascript"></script>
+<script src="analysis.js?v={{version}}"></script>
 {% end %}

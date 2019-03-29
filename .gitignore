@@ -5,6 +5,11 @@ __pycache__/
 *.pyc
 dist/
 
+# generated content
+openpifpafwebdemo/static/analysis.js*
+openpifpafwebdemo/static/index.html
+openpifpafwebdemo/analysis.js*
+
 # JavaScript
 node_modules/
 js/build/

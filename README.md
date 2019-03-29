@@ -20,8 +20,8 @@ Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arX
 Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
 
 ```sh
-pip install openpifpafwebdemo
-python -m openpifpafwebdemo.server
+pip3 install openpifpafwebdemo
+python3 -m openpifpafwebdemo.server
 ```
 
 Open a web browser at `http://localhost:5000` to view the web interface.
@@ -30,8 +30,9 @@ __Example__: ResNet-50 on a laptop without GPU acceleration running at 5.1 FPS.
 
 <img src="docs/example.png" height=250 alt="example image" />
 
-
-To install from source and set up for development use `pip install --editable ".[test]"`.
+To install from source and set up for development use
+`pip install --editable ".[test]"`, install the frontend dependencies with
+`npm install` and then create the frontend JavaScript code with `npm run build`.
 
 
 # API
