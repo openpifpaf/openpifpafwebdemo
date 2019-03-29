@@ -121,6 +121,7 @@ def main():
                         help='disable CUDA')
     parser.add_argument('--resolution', default=0.3, type=float)
     parser.add_argument('--grep-static', default=False, action='store_true')
+    parser.add_argument('--google-analytics')
     args = parser.parse_args()
 
     # add args.device
@@ -137,7 +138,8 @@ def main():
     tornado.autoreload.watch('openpifpafwebdemo/analysis.js')
 
     databench.run(Demo, __file__,
-                  info={'title': 'OpenPifPafWebDemo'},
+                  info={'title': 'OpenPifPafWebDemo',
+                        'google_analytics': args.google_analytics},
                   static={r'(analysis\.js.*)': '.', r'static/(.*)': 'openpifpafwebdemo/static'},
                   extra_routes=[('process', PostHandler, None)])
 
