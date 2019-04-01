@@ -20,7 +20,7 @@ const c = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
 
 export function newImage() {
-    const data = c.imageData()
+    const data = c.imageData();
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', backend_location + '/process', true);

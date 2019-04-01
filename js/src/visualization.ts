@@ -45,6 +45,7 @@ export class Visualization {
         if (data && data.length > 0) {
             const widthHeight = data[0].width_height;
             const targetHeight = Math.round(this.canvas.clientWidth * widthHeight[1] / widthHeight[0]);
+            console.log({widthHeight, targetHeight});
             if (this.canvas.clientHeight !== targetHeight) {
                 this.canvas.height = targetHeight;
             }

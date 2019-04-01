@@ -24,7 +24,7 @@ export class Camera {
                 .filter(device => device.kind === 'videoinput')
                 .map(device => device.deviceId);
         }).catch(function(err) {
-            console.log(err.name + ": " + err.message);
+            console.log(err.name + ': ' + err.message);
         });
 
 
@@ -59,7 +59,7 @@ export class Camera {
         if (this.cameraId && this.cameraIds.length > 1) {
             const currentCameraIndex = this.cameraIds.indexOf(this.cameraId);
             let nextCameraIndex = currentCameraIndex + 1;
-            if (nextCameraIndex >= this.cameraIds.length) nextCameraIndex = 0
+            if (nextCameraIndex >= this.cameraIds.length) nextCameraIndex = 0;
             nextCameraId = this.cameraIds[nextCameraIndex];
         } else if (this.cameraIds.length > 1) {
             // assume the default (unset this.cameraId) was camera 0, so go to 1
