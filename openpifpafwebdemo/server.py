@@ -44,6 +44,7 @@ class Processor(object):
                 (int(480 * self.resolution), int(640 * self.resolution)),
                 PIL.Image.BICUBIC,
             )
+        width_height = im.size
 
         start = time.time()
         preprocess = openpifpaf.transforms.image_transform
@@ -59,7 +60,7 @@ class Processor(object):
             keypoint_sets[:, :, 0] /= processed_image_cpu.shape[2]
             keypoint_sets[:, :, 1] /= processed_image_cpu.shape[1]
 
-            yield keypoint_sets, scores
+            yield keypoint_sets, scores, width_height
 
 
 PROCESSOR_SINGLETON = None
@@ -86,11 +87,12 @@ class PostHandler(RequestHandler):
             self.write('no image provided')
             return
 
-        for keypoint_sets, scores in PROCESSOR_SINGLETON.single_image(image):
+        for keypoint_sets, scores, width_height in PROCESSOR_SINGLETON.single_image(image):
             keypoint_sets = [{
                 'coordinates': keypoints.tolist(),
                 'detection_id': i,
                 'score': score,
+                'width_height': width_height,
             } for i, (keypoints, score) in enumerate(zip(keypoint_sets, scores))]
             self.write(json.dumps(keypoint_sets))
 

@@ -2,6 +2,8 @@
 
 
 {% block head %}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="mobile-web-app-capable" content="yes">
@@ -10,10 +12,15 @@
 
 
 {% block analysis %}
-<div>
-  <video id="video" style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
-  <canvas id="canvas-capture" style="display: none" width=640 height=480></canvas>
-  <canvas id="canvas-out" style="max-width:100%;" width=320 height=240></canvas>
+<div style="position:relative;">
+  <div id="capture">
+    <video style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
+    <canvas style="display: none" width=640 height=480></canvas>
+    <button style="position:absolute; bottom:2px;" class="nextCamera"><i class="fas fa-video"></i></button>
+  </div>
+  <div id="visualization">
+    <canvas style="max-width:100%;" width=320 height=240></canvas>
+  </div>
 </div>
 
 <div style="font-size: 200%">
