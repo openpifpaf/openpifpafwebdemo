@@ -26,7 +26,7 @@ export class Camera {
 
             // On iOS, all deviceId and label for devices are empty.
             // So making up labels here that should be used for facingMode instead.
-            if (this.cameraIds.length == 2 && this.cameraIds.every(i => i == '')) {
+            if (this.cameraIds.length === 2 && this.cameraIds.every(i => i === '')) {
                 this.cameraIds = ['user', 'environment'];
             }
         }).catch(function(err) {
@@ -48,7 +48,7 @@ export class Camera {
                 ...(<MediaTrackConstraints>defaultCapabilities.video),
             }
         };
-        if (cameraId == 'user' || cameraId == 'environment') {
+        if (cameraId === 'user' || cameraId === 'environment') {
             capabilities.video.facingMode = cameraId;
         } else {
             capabilities.video.deviceId = cameraId;
@@ -63,8 +63,8 @@ export class Camera {
         // update capture canvas size
         const landscape = this.video.clientWidth > this.video.clientHeight;
         const targetSize = landscape ? [640, 480] : [480, 640];
-        if (this.captureCanvas.clientWidth != targetSize[0]) this.captureCanvas.width = targetSize[0];
-        if (this.captureCanvas.clientHeight != targetSize[0]) this.captureCanvas.height = targetSize[1];
+        if (this.captureCanvas.clientWidth !== targetSize[0]) this.captureCanvas.width = targetSize[0];
+        if (this.captureCanvas.clientHeight !== targetSize[0]) this.captureCanvas.height = targetSize[1];
 
         // capture
         this.captureCounter += 1;
