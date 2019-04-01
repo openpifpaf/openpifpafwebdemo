@@ -23,6 +23,12 @@ export class Camera {
             this.cameraIds = devices
                 .filter(device => device.kind === 'videoinput')
                 .map(device => device.deviceId);
+
+            // On iOS, all deviceId and label for devices are empty.
+            // So making up labels here that should be used for facingMode instead.
+            if (this.cameraIds.length == 2 && this.cameraIds.every(i => i == '')) {
+                this.cameraIds = ['user', 'environment'];
+            }
         }).catch(function(err) {
             console.log(err.name + ': ' + err.message);
         });
@@ -36,18 +42,31 @@ export class Camera {
     async setCamera(cameraId?: string) {
         if (cameraId && cameraId === this.cameraId) return;
 
-        const stream = await navigator.mediaDevices.getUserMedia({
+        let capabilities = {
             ...defaultCapabilities,
             video: {
                 ...(<MediaTrackConstraints>defaultCapabilities.video),
-                deviceId: cameraId,
-            },
-        });
+            }
+        };
+        if (cameraId == 'user' || cameraId == 'environment') {
+            capabilities.video.facingMode = cameraId;
+        } else {
+            capabilities.video.deviceId = cameraId;
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia(capabilities);
         this.video.srcObject = stream;
         this.cameraId = cameraId;
     }
 
     imageData() {
+        // update capture canvas size
+        const landscape = this.video.clientWidth > this.video.clientHeight;
+        const targetSize = landscape ? [640, 480] : [480, 640];
+        if (this.captureCanvas.clientWidth != targetSize[0]) this.captureCanvas.width = targetSize[0];
+        if (this.captureCanvas.clientHeight != targetSize[0]) this.captureCanvas.height = targetSize[1];
+
+        // capture
         this.captureCounter += 1;
         this.captureContext.drawImage(
             this.video, 0, 0, this.captureCanvas.width, this.captureCanvas.height);

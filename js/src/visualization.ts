@@ -45,7 +45,6 @@ export class Visualization {
         if (data && data.length > 0) {
             const widthHeight = data[0].width_height;
             const targetHeight = Math.round(this.canvas.clientWidth * widthHeight[1] / widthHeight[0]);
-            console.log({widthHeight, targetHeight});
             if (this.canvas.clientHeight !== targetHeight) {
                 this.canvas.height = targetHeight;
             }
@@ -53,7 +52,7 @@ export class Visualization {
 
         // draw on output canvas
         let i = new Image();
-            i.onload = () => {
+        i.onload = () => {
             this.context.drawImage(i, 0, 0, this.canvas.width, this.canvas.height);
             data.forEach((entry: any) => this.drawSkeleton(entry.coordinates, entry.detection_id));
         };
