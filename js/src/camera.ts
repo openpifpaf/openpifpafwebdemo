@@ -26,7 +26,7 @@ export class Camera {
 
             // On iOS, all deviceId and label for devices are empty.
             // So making up labels here that should be used for facingMode instead.
-            if (this.cameraIds.length === 2 && this.cameraIds.every(i => i === '')) {
+            if (this.cameraIds.length >= 2 && this.cameraIds.every(i => i === '')) {
                 this.cameraIds = ['user', 'environment'];
             }
         }).catch(function(err) {
