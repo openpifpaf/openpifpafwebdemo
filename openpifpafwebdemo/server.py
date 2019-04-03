@@ -21,9 +21,9 @@ import openpifpaf.transforms
 class Processor(object):
     def __init__(self, args):
         # load model
-        self.model, _ = openpifpaf.network.nets.factory(args)
+        self.model, _ = openpifpaf.network.nets.factory_from_args(args)
         self.model = self.model.to(args.device)
-        self.processors = openpifpaf.decoder.factory(args, self.model)
+        self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
         self.device = args.device
         self.resolution = args.resolution
 
@@ -52,15 +52,14 @@ class Processor(object):
         processed_image = processed_image_cpu.contiguous().to(self.device, non_blocking=True)
         print('preprocessing time', time.time() - start)
 
-        all_fields = self.processors[0].fields(torch.unsqueeze(processed_image.float(), 0))[0]
-        for processor in self.processors:
-            keypoint_sets, scores = processor.keypoint_sets(all_fields)
+        all_fields = self.processor.fields(torch.unsqueeze(processed_image.float(), 0))[0]
+        keypoint_sets, scores = self.processor.keypoint_sets(all_fields)
 
-            # normalize scale
-            keypoint_sets[:, :, 0] /= processed_image_cpu.shape[2]
-            keypoint_sets[:, :, 1] /= processed_image_cpu.shape[1]
+        # normalize scale
+        keypoint_sets[:, :, 0] /= processed_image_cpu.shape[2]
+        keypoint_sets[:, :, 1] /= processed_image_cpu.shape[1]
 
-            yield keypoint_sets, scores, width_height
+        return keypoint_sets, scores, width_height
 
 
 PROCESSOR_SINGLETON = None
@@ -87,14 +86,14 @@ class PostHandler(RequestHandler):
             self.write('no image provided')
             return
 
-        for keypoint_sets, scores, width_height in PROCESSOR_SINGLETON.single_image(image):
-            keypoint_sets = [{
-                'coordinates': keypoints.tolist(),
-                'detection_id': i,
-                'score': score,
-                'width_height': width_height,
-            } for i, (keypoints, score) in enumerate(zip(keypoint_sets, scores))]
-            self.write(json.dumps(keypoint_sets))
+        keypoint_sets, scores, width_height = PROCESSOR_SINGLETON.single_image(image)
+        keypoint_sets = [{
+            'coordinates': keypoints.tolist(),
+            'detection_id': i,
+            'score': score,
+            'width_height': width_height,
+        } for i, (keypoints, score) in enumerate(zip(keypoint_sets, scores))]
+        self.write(json.dumps(keypoint_sets))
 
     def options(self):
         self.set_default_headers()
