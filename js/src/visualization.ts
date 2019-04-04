@@ -32,9 +32,11 @@ export class Visualization {
     ui: HTMLElement;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
+    originalCanvasSize: number[];
 
     constructor(ui: HTMLElement) {
         this.canvas = <HTMLCanvasElement>ui.getElementsByTagName('canvas')[0];
+        this.originalCanvasSize = [this.canvas.width, this.canvas.height];
         this.context = this.canvas.getContext('2d');
     }
 
@@ -43,11 +45,10 @@ export class Visualization {
 
         // adjust height of output canvas
         if (data && data.length > 0) {
-            const widthHeight = data[0].width_height;
-            const targetHeight = Math.round(this.canvas.clientWidth * widthHeight[1] / widthHeight[0]);
-            if (this.canvas.clientHeight !== targetHeight) {
-                this.canvas.height = targetHeight;
-            }
+            const landscape = data[0].width_height[0] > data[0].width_height[1];
+            const targetSize = landscape ? this.originalCanvasSize : this.originalCanvasSize.slice().reverse();
+            if (this.canvas.width !== targetSize[0]) this.canvas.width = targetSize[0];
+            if (this.canvas.height !== targetSize[1]) this.canvas.height = targetSize[1];
         }
 
         // draw on output canvas

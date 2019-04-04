@@ -17,6 +17,8 @@ import openpifpaf
 import openpifpaf.network.nets
 import openpifpaf.transforms
 
+from . import __version__ as VERSION
+
 
 class Processor(object):
     def __init__(self, args):
@@ -31,8 +33,8 @@ class Processor(object):
         imgstr = re.search(r'base64,(.*)', b64image).group(1)
         image_bytes = io.BytesIO(base64.b64decode(imgstr))
         im = PIL.Image.open(image_bytes).convert('RGB')
+        print('input image', im.size, self.resolution)
 
-        print(im.size, self.resolution)
         landscape = im.size[0] > im.size[1]
         if landscape:
             im = im.resize(
@@ -140,7 +142,8 @@ def main():
 
     databench.run(Demo, __file__,
                   info={'title': 'OpenPifPafWebDemo',
-                        'google_analytics': args.google_analytics},
+                        'google_analytics': args.google_analytics,
+                        'version': VERSION},
                   static={r'(analysis\.js.*)': '.', r'static/(.*)': 'openpifpafwebdemo/static'},
                   extra_routes=[('process', PostHandler, None)])
 
