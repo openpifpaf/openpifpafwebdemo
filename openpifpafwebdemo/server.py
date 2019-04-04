@@ -36,16 +36,12 @@ class Processor(object):
         print('input image', im.size, self.resolution)
 
         landscape = im.size[0] > im.size[1]
-        if landscape:
-            im = im.resize(
-                (int(640 * self.resolution), int(480 * self.resolution)),
-                PIL.Image.BICUBIC,
-            )
-        else:
-            im = im.resize(
-                (int(480 * self.resolution), int(640 * self.resolution)),
-                PIL.Image.BICUBIC,
-            )
+        target_wh = (int(640 * self.resolution), int(480 * self.resolution))
+        if not landscape:
+            target_wh = (int(480 * self.resolution), int(640 * self.resolution))
+        if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
+            print('!!! have to resize image', target_wh, im.size)
+            im = im.resize(target_wh, PIL.Image.BICUBIC)
         width_height = im.size
 
         start = time.time()
@@ -122,7 +118,7 @@ def main():
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
-    parser.add_argument('--resolution', default=0.3, type=float)
+    parser.add_argument('--resolution', default=0.4, type=float)
     parser.add_argument('--grep-static', default=False, action='store_true')
     parser.add_argument('--google-analytics')
     args = parser.parse_args()
@@ -143,7 +139,8 @@ def main():
     databench.run(Demo, __file__,
                   info={'title': 'OpenPifPafWebDemo',
                         'google_analytics': args.google_analytics,
-                        'version': VERSION},
+                        'version': VERSION,
+                        'resolution': args.resolution},
                   static={r'(analysis\.js.*)': '.', r'static/(.*)': 'openpifpafwebdemo/static'},
                   extra_routes=[('process', PostHandler, None)])
 
