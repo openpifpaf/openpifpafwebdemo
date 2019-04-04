@@ -33,11 +33,16 @@ export class Visualization {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     originalCanvasSize: number[];
+    lineWidth: number;
+    markerSize: number;
 
     constructor(ui: HTMLElement) {
         this.canvas = <HTMLCanvasElement>ui.getElementsByTagName('canvas')[0];
         this.originalCanvasSize = [this.canvas.width, this.canvas.height];
         this.context = this.canvas.getContext('2d');
+
+        this.lineWidth = 10;
+        this.markerSize = 4;
     }
 
     draw(image, data) {
@@ -67,7 +72,7 @@ export class Visualization {
             const joint2xyv = keypoints[joint2i - 1];
             const color = COLORS[connection_index % COLORS.length];
             this.context.strokeStyle = color;
-            this.context.lineWidth = 5;
+            this.context.lineWidth = this.lineWidth;
             if (joint1xyv[2] === 0.0 || joint2xyv[2] === 0.0) return;
 
             this.context.beginPath();
@@ -87,7 +92,7 @@ export class Visualization {
             this.context.fillStyle = '#ffffff';
             this.context.arc(xyv[0] * this.canvas.width,
                              xyv[1] * this.canvas.height,
-                             2,
+                             this.markerSize,
                              0, 2 * Math.PI);
             this.context.fill();
         });
