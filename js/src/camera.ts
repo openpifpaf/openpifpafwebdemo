@@ -5,6 +5,7 @@ export class Camera {
     ui: HTMLElement;
     video: HTMLVideoElement;
     captureCanvas: HTMLCanvasElement;
+    originalCaptureCanvasSize: number[];
     captureContext: CanvasRenderingContext2D;
     buttonNextCamera: HTMLButtonElement;
     currentCamera?: string;
@@ -16,6 +17,8 @@ export class Camera {
         this.ui = ui;
         this.video = ui.getElementsByTagName('video')[0];
         this.captureCanvas = ui.getElementsByTagName('canvas')[0];
+        this.originalCaptureCanvasSize = [this.captureCanvas.width,
+                                          this.captureCanvas.height];
         this.captureContext = this.captureCanvas.getContext('2d');
         this.buttonNextCamera = <HTMLButtonElement>ui.getElementsByClassName('nextCamera')[0];
         this.captureCounter = 0;
@@ -62,9 +65,9 @@ export class Camera {
     imageData() {
         // update capture canvas size
         const landscape = this.video.clientWidth > this.video.clientHeight;
-        const targetSize = landscape ? [640, 480] : [480, 640];
-        if (this.captureCanvas.clientWidth !== targetSize[0]) this.captureCanvas.width = targetSize[0];
-        if (this.captureCanvas.clientHeight !== targetSize[0]) this.captureCanvas.height = targetSize[1];
+        const targetSize = landscape ? this.originalCaptureCanvasSize : this.originalCaptureCanvasSize.slice().reverse();
+        if (this.captureCanvas.width !== targetSize[0]) this.captureCanvas.width = targetSize[0];
+        if (this.captureCanvas.height !== targetSize[1]) this.captureCanvas.height = targetSize[1];
 
         // capture
         this.captureCounter += 1;
