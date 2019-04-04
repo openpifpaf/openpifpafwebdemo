@@ -67,7 +67,7 @@ export class Camera {
         const landscape = this.video.clientWidth > this.video.clientHeight;
         const targetSize = landscape ? this.originalCaptureCanvasSize : this.originalCaptureCanvasSize.slice().reverse();
         if (this.captureCanvas.width !== targetSize[0]) this.captureCanvas.width = targetSize[0];
-        if (this.captureCanvas.height !== targetSize[0]) this.captureCanvas.height = targetSize[1];
+        if (this.captureCanvas.height !== targetSize[1]) this.captureCanvas.height = targetSize[1];
 
         // capture
         this.captureCounter += 1;

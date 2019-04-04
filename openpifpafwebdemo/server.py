@@ -40,7 +40,7 @@ class Processor(object):
         if not landscape:
             target_wh = (int(480 * self.resolution), int(640 * self.resolution))
         if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
-            print('!!! have to resize image', target_wh, im.size)
+            print('!!! have to resize image to', target_wh, ' from ', im.size)
             im = im.resize(target_wh, PIL.Image.BICUBIC)
         width_height = im.size
 
