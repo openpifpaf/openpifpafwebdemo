@@ -26,9 +26,9 @@ python3 -m openpifpafwebdemo.server
 
 Open a web browser at `http://localhost:5000` to view the web interface.
 
-__Example__: ResNet-50 on a laptop without GPU acceleration running at 5.1 FPS.
+__Example__:
 
-<img src="docs/example.png" height=250 alt="example image" />
+<img src="docs/wave3.gif" height=250 alt="example image" />
 
 To install from source and set up for development use
 `pip install --editable ".[test]"`, install the frontend dependencies with
