@@ -4,15 +4,21 @@ import argparse
 import base64
 import io
 import json
+import logging
+import os
 import re
+import shutil
+import ssl
+import sys
 import time
 
 import PIL
 import torch
 import tornado
+import tornado.autoreload
+import tornado.httpclient
 from tornado.web import RequestHandler
 
-import databench
 import openpifpaf
 import openpifpaf.network.nets
 import openpifpaf.transforms
@@ -63,10 +69,6 @@ class Processor(object):
 PROCESSOR_SINGLETON = None
 
 
-class Demo(databench.Analysis):
-    pass
-
-
 # pylint: disable=abstract-method
 class PostHandler(RequestHandler):
     def set_default_headers(self):
@@ -99,12 +101,25 @@ class PostHandler(RequestHandler):
         self.finish()
 
 
-async def grep_static(url='http://127.0.0.1:5000', dest='openpifpafwebdemo/static/index.html'):
+class RenderTemplate(tornado.web.RequestHandler):
+    def initialize(self, template_name, **info):
+        self.template_name = template_name  # pylint: disable=attribute-defined-outside-init
+        self.info = info  # pylint: disable=attribute-defined-outside-init
+
+    def get(self):
+        print('ABOUT TO CALL RENDER FOR', self.template_name)
+        self.render(self.template_name, **self.info)
+
+    def head(self):
+        pass
+
+
+async def grep_static(dest, url='http://127.0.0.1:5000'):
     http_client = tornado.httpclient.AsyncHTTPClient()
     response = await http_client.fetch(url)
     out = response.body.decode()
-    out = out.replace('="/_static', '="_static')
-    out = out.replace('href="/"', 'href="/openpifpafwebdemo"')
+    # out = out.replace('="/_static', '="_static')
+    # out = out.replace('href="/"', 'href="/openpifpafwebdemo"')
     with open(dest, 'w') as f:
         f.write(out)
     http_client.close()
@@ -119,9 +134,44 @@ def main():
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
     parser.add_argument('--resolution', default=0.4, type=float)
-    parser.add_argument('--grep-static', default=False, action='store_true')
+    parser.add_argument('--write-static-page', default=None,
+                        help='directory in which to create a static version of this page')
+    parser.add_argument('--debug', default=False, action='store_true')
     parser.add_argument('--google-analytics')
+
+    parser.add_argument('--log', dest='loglevel', default="INFO",
+                        type=str.upper,
+                        help=('log level (info, warning, error, critical or '
+                              'debug, default info)'))
+    parser.add_argument('--host', dest='host',
+                        default=os.environ.get('HOST', '127.0.0.1'),
+                        help='host address for webserver (default 127.0.0.1)')
+    parser.add_argument('--port', dest='port',
+                        type=int, default=int(os.environ.get('PORT', 5000)),
+                        help='port for webserver')
+
+    ssl_args = parser.add_argument_group('SSL')
+    ssl_args.add_argument('--ssl-certfile', dest='ssl_certfile',
+                          default=os.environ.get('SSLCERTFILE'),
+                          help='SSL certificate file')
+    ssl_args.add_argument('--ssl-keyfile', dest='ssl_keyfile',
+                          default=os.environ.get('SSLKEYFILE'),
+                          help='SSL key file')
+    ssl_args.add_argument('--ssl-port', dest='ssl_port', type=int,
+                          default=int(os.environ.get('SSLPORT', 0)),
+                          help='SSL port for webserver')
+
     args = parser.parse_args()
+
+    # log
+    logging.basicConfig(level=getattr(logging, args.loglevel))
+    if args.loglevel != 'INFO':
+        logging.info('Set loglevel to %s.', args.loglevel)
+
+    logging.debug('host=%s, port=%d', args.host, args.port)
+    logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, VERSION)
+    if args.host in ('localhost', '127.0.0.1'):
+        logging.info('Open http://%s:%d in a web browser.', args.host, args.port)
 
     # add args.device
     args.device = torch.device('cpu')
@@ -130,19 +180,60 @@ def main():
 
     PROCESSOR_SINGLETON = Processor(args)
 
-    if args.grep_static:
-        tornado.ioloop.IOLoop.current().call_later(1.0, grep_static)
+    static_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
+
+    if args.write_static_page:
+        shutil.copytree(static_path, os.path.join(args.write_static_page, 'static'))
+        tornado.ioloop.IOLoop.current().call_later(
+            1.0, grep_static, os.path.join(args.write_static_page, 'index.html'))
 
     tornado.autoreload.watch('openpifpafwebdemo/index.html')
     tornado.autoreload.watch('openpifpafwebdemo/analysis.js')
 
-    databench.run(Demo, __file__,
-                  info={'title': 'OpenPifPafWebDemo',
-                        'google_analytics': args.google_analytics,
-                        'version': VERSION,
-                        'resolution': args.resolution},
-                  static={r'(analysis\.js.*)': '.', r'static/(.*)': 'openpifpafwebdemo/static'},
-                  extra_routes=[('process', PostHandler, None)])
+    app = tornado.web.Application(
+        [
+            (r'/', RenderTemplate, {
+                'template_name': 'index.html',
+                'title': 'OpenPifPafWebDemo',
+                'description': 'Interactive web browser based demo of OpenPifPaf.',
+                'version': VERSION,
+                'google_analytics': args.google_analytics,
+                'resolution': args.resolution,
+            }),
+            (r'/(analysis\.js.*)', tornado.web.StaticFileHandler, {
+                'path': os.path.join(static_path, 'analysis.js'),
+            }),
+            (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
+                'path': os.path.join(static_path, 'favicon.ico'),
+            }),
+            (r'/process', PostHandler, None),
+        ],
+        debug=args.debug,
+        # template_loader=Loader([self.analyses_path, template_path]),
+        static_path=os.path.join(os.path.dirname(__file__), 'static'),
+    )
+    app.listen(args.port, args.host)
+
+    # HTTPS server
+    if args.ssl_port:
+        if args.ssl_certfile and args.ssl_keyfile:
+            ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            ssl_ctx.load_cert_chain(args.ssl_certfile, args.ssl_keyfile)
+        else:
+            # use Tornado's self signed certificates
+            module_dir = os.path.dirname(tornado.__file__)
+            ssl_ctx = {
+                'certfile': os.path.join(module_dir, 'test', 'test.crt'),
+                'keyfile': os.path.join(module_dir, 'test', 'test.key'),
+            }
+
+        logging.info('Open https://%s:%d in a web browser.', args.host, args.ssl_port)
+        app.listen(args.ssl_port, ssl_options=ssl_ctx)
+
+    try:
+        tornado.ioloop.IOLoop.current().start()
+    except KeyboardInterrupt:
+        tornado.ioloop.IOLoop.current().stop()
 
 
 if __name__ == '__main__':
