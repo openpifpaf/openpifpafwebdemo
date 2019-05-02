@@ -1,4 +1,4 @@
-from __future__ import division
+"""OpenPifPaf web demo server process."""
 
 import argparse
 import json
@@ -78,20 +78,26 @@ async def grep_static(dest, url='http://127.0.0.1:5000'):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     openpifpaf.decoder.cli(parser, force_complete_pose=False, instance_threshold=0.05)
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
-    parser.add_argument('--resolution', default=0.4, type=float)
+    parser.add_argument('--resolution', default=0.4, type=float,
+                        help='resolution prescale factor from 640x480')
     parser.add_argument('--write-static-page', default=None,
                         help='directory in which to create a static version of this page')
-    parser.add_argument('--debug', default=False, action='store_true')
-    parser.add_argument('--google-analytics')
+    parser.add_argument('--debug', default=False, action='store_true',
+                        help='debug messages and autoreload')
+    parser.add_argument('--google-analytics',
+                        help='provide a google analytics id to inject analytics code')
 
     parser.add_argument('--host', dest='host',
                         default=os.environ.get('HOST', '127.0.0.1'),
-                        help='host address for webserver (default 127.0.0.1)')
+                        help='host address for webserver, use 0.0.0.0 for global access')
     parser.add_argument('--port', dest='port',
                         type=int, default=int(os.environ.get('PORT', 5000)),
                         help='port for webserver')
