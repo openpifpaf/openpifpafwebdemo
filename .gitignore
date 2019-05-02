@@ -9,6 +9,7 @@ dist/
 openpifpafwebdemo/static/analysis.js*
 openpifpafwebdemo/static/index.html
 openpifpafwebdemo/analysis.js*
+gh-pages/
 
 # JavaScript
 node_modules/

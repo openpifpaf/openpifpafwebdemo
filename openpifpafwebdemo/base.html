@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{ title }}</title>
+        <meta name="description" content="{{ description }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="shortcut icon" href="static/favicon.ico">
+        {% block head %}{% end %}
+    </head>
+    <body>
+        <header>
+            <h2 id="d-title"><a href="/" class="text-muted">
+                <img id="d-logo" alt="logo" src="static/logo.svg" />{{ title }}
+            </a></h2>
+        </header>
+
+        <main>
+            {% block content %}
+            {% end %}
+        </main>
+
+        <footer>
+            <a href="https://github.com/vita-epfl/openpifpafwebdemo">Project on Github</a>.
+            Created by <a href="https://twitter.com/svenkreiss">@svenkreiss</a>.<br />
+            <br />
+            Copyright 2019, <a href="https://www.epfl.ch/labs/vita/">VITA lab at EPFL</a>.<br />
+            <a href="//www.epfl.ch/about/overview/overview/regulations-and-guidelines/">EPFL Legal</a>.<br />
+            {% block footer %}{% end %}
+            <!-- This is v{{version}}. -->
+        </footer>
+
+        {% if google_analytics %}
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id={{google_analytics}}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{google_analytics}}', { 'anonymize_ip': true });
+            </script>
+        {% end %}
+    </body>
+</html>

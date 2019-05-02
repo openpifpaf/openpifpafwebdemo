@@ -24,7 +24,7 @@ setup(
 
     install_requires=[
         'openpifpaf>=0.3.0',
-        'databench>=0.7.3',
+        'tornado>=6',
     ],
     extras_require={
         'test': [
