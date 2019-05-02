@@ -24,6 +24,7 @@ setup(
 
     install_requires=[
         'openpifpaf>=0.3.0',
+        'tornado>=6',
     ],
     extras_require={
         'test': [
