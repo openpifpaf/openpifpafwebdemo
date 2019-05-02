@@ -14,8 +14,7 @@ import tornado.autoreload
 import tornado.httpclient
 from tornado.web import RequestHandler
 
-import openpifpaf.network.nets
-import openpifpaf.transforms
+import openpifpaf
 
 from .processor import Processor
 from . import __version__ as VERSION
