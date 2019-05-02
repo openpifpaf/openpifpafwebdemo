@@ -61,7 +61,6 @@ class RenderTemplate(tornado.web.RequestHandler):
         self.info = info  # pylint: disable=attribute-defined-outside-init
 
     def get(self):
-        print('ABOUT TO CALL RENDER FOR', self.template_name)
         self.render(self.template_name, **self.info)
 
     def head(self):
