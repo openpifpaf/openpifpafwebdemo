@@ -1,76 +1,31 @@
 from __future__ import division
 
 import argparse
-import base64
-import io
 import json
 import logging
 import os
-import re
 import shutil
 import ssl
 import sys
-import time
 
-import PIL
 import torch
 import tornado
 import tornado.autoreload
 import tornado.httpclient
 from tornado.web import RequestHandler
 
-import openpifpaf
 import openpifpaf.network.nets
 import openpifpaf.transforms
 
+from .processor import Processor
 from . import __version__ as VERSION
-
-
-class Processor(object):
-    def __init__(self, args):
-        # load model
-        self.model, _ = openpifpaf.network.nets.factory_from_args(args)
-        self.model = self.model.to(args.device)
-        self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
-        self.device = args.device
-        self.resolution = args.resolution
-
-    def single_image(self, b64image):
-        imgstr = re.search(r'base64,(.*)', b64image).group(1)
-        image_bytes = io.BytesIO(base64.b64decode(imgstr))
-        im = PIL.Image.open(image_bytes).convert('RGB')
-        print('input image', im.size, self.resolution)
-
-        landscape = im.size[0] > im.size[1]
-        target_wh = (int(640 * self.resolution), int(480 * self.resolution))
-        if not landscape:
-            target_wh = (int(480 * self.resolution), int(640 * self.resolution))
-        if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
-            print('!!! have to resize image to', target_wh, ' from ', im.size)
-            im = im.resize(target_wh, PIL.Image.BICUBIC)
-        width_height = im.size
-
-        start = time.time()
-        preprocess = openpifpaf.transforms.image_transform
-        processed_image_cpu = preprocess(im)
-        processed_image = processed_image_cpu.contiguous().to(self.device, non_blocking=True)
-        print('preprocessing time', time.time() - start)
-
-        all_fields = self.processor.fields(torch.unsqueeze(processed_image.float(), 0))[0]
-        keypoint_sets, scores = self.processor.keypoint_sets(all_fields)
-
-        # normalize scale
-        keypoint_sets[:, :, 0] /= processed_image_cpu.shape[2]
-        keypoint_sets[:, :, 1] /= processed_image_cpu.shape[1]
-
-        return keypoint_sets, scores, width_height
-
-
-PROCESSOR_SINGLETON = None
 
 
 # pylint: disable=abstract-method
 class PostHandler(RequestHandler):
+    def initialize(self, processor):
+        self.processor = processor  # pylint: disable=attribute-defined-outside-init
+
     def set_default_headers(self):
         self.set_header('Access-Control-Allow-Origin', '*')
         self.set_header('Access-Control-Allow-Headers',
@@ -86,7 +41,7 @@ class PostHandler(RequestHandler):
             self.write('no image provided')
             return
 
-        keypoint_sets, scores, width_height = PROCESSOR_SINGLETON.single_image(image)
+        keypoint_sets, scores, width_height = self.processor.single_image(image)
         keypoint_sets = [{
             'coordinates': keypoints.tolist(),
             'detection_id': i,
@@ -118,16 +73,12 @@ async def grep_static(dest, url='http://127.0.0.1:5000'):
     http_client = tornado.httpclient.AsyncHTTPClient()
     response = await http_client.fetch(url)
     out = response.body.decode()
-    # out = out.replace('="/_static', '="_static')
-    # out = out.replace('href="/"', 'href="/openpifpafwebdemo"')
     with open(dest, 'w') as f:
         f.write(out)
     http_client.close()
 
 
 def main():
-    global PROCESSOR_SINGLETON  # pylint: disable=global-statement
-
     parser = argparse.ArgumentParser()
     openpifpaf.decoder.cli(parser, force_complete_pose=False, instance_threshold=0.05)
     openpifpaf.network.nets.cli(parser)
@@ -139,10 +90,6 @@ def main():
     parser.add_argument('--debug', default=False, action='store_true')
     parser.add_argument('--google-analytics')
 
-    parser.add_argument('--log', dest='loglevel', default="INFO",
-                        type=str.upper,
-                        help=('log level (info, warning, error, critical or '
-                              'debug, default info)'))
     parser.add_argument('--host', dest='host',
                         default=os.environ.get('HOST', '127.0.0.1'),
                         help='host address for webserver (default 127.0.0.1)')
@@ -164,10 +111,9 @@ def main():
     args = parser.parse_args()
 
     # log
-    logging.basicConfig(level=getattr(logging, args.loglevel))
-    if args.loglevel != 'INFO':
-        logging.info('Set loglevel to %s.', args.loglevel)
+    logging.basicConfig(level=logging.INFO if not args.debug else logging.DEBUG)
 
+    # config
     logging.debug('host=%s, port=%d', args.host, args.port)
     logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, VERSION)
     if args.host in ('localhost', '127.0.0.1'):
@@ -178,7 +124,7 @@ def main():
     if not args.disable_cuda and torch.cuda.is_available():
         args.device = torch.device('cuda')
 
-    PROCESSOR_SINGLETON = Processor(args)
+    processor_singleton = Processor(args)
 
     static_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
 
@@ -206,10 +152,9 @@ def main():
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),
             }),
-            (r'/process', PostHandler, None),
+            (r'/process', PostHandler, {'processor': processor_singleton}),
         ],
         debug=args.debug,
-        # template_loader=Loader([self.analyses_path, template_path]),
         static_path=os.path.join(os.path.dirname(__file__), 'static'),
     )
     app.listen(args.port, args.host)
