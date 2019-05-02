@@ -145,16 +145,13 @@ def main():
                 'google_analytics': args.google_analytics,
                 'resolution': args.resolution,
             }),
-            (r'/(analysis\.js.*)', tornado.web.StaticFileHandler, {
-                'path': os.path.join(static_path, 'analysis.js'),
-            }),
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),
             }),
             (r'/process', PostHandler, {'processor': processor_singleton}),
         ],
         debug=args.debug,
-        static_path=os.path.join(os.path.dirname(__file__), 'static'),
+        static_path=static_path,
     )
     app.listen(args.port, args.host)
 
