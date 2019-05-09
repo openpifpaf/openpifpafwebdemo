@@ -4,8 +4,10 @@ import argparse
 import json
 import logging
 import os
+import random
 import shutil
 import ssl
+import string
 import sys
 
 import torch
@@ -86,7 +88,8 @@ def main():
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
     parser.add_argument('--resolution', default=0.4, type=float,
-                        help='resolution prescale factor from 640x480')
+                        help=('Resolution prescale factor from 640x480. '
+                              'Will be rounded to multiples of 16.'))
     parser.add_argument('--write-static-page', default=None,
                         help='directory in which to create a static version of this page')
     parser.add_argument('--debug', default=False, action='store_true',
@@ -128,7 +131,10 @@ def main():
     if not args.disable_cuda and torch.cuda.is_available():
         args.device = torch.device('cuda')
 
-    processor_singleton = Processor(args)
+    width_height = (int(640 * args.resolution // 16) * 16 + 1,
+                    int(480 * args.resolution // 16) * 16 + 1)
+    logging.debug('target width and height = %s', width_height)
+    processor_singleton = Processor(width_height, args)
 
     static_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
 
@@ -138,7 +144,15 @@ def main():
             1.0, grep_static, os.path.join(args.write_static_page, 'index.html'))
 
     tornado.autoreload.watch('openpifpafwebdemo/index.html')
-    tornado.autoreload.watch('openpifpafwebdemo/analysis.js')
+    tornado.autoreload.watch('openpifpafwebdemo/static/analysis.js')
+
+    if args.debug:
+        version = '{}-{}'.format(
+            VERSION,
+            ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        )
+    else:
+        version = VERSION
 
     app = tornado.web.Application(
         [
@@ -146,9 +160,9 @@ def main():
                 'template_name': 'index.html',
                 'title': 'OpenPifPafWebDemo',
                 'description': 'Interactive web browser based demo of OpenPifPaf.',
-                'version': VERSION,
+                'version': version,
                 'google_analytics': args.google_analytics,
-                'resolution': args.resolution,
+                'width_height': width_height,
             }),
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),

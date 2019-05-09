@@ -10,24 +10,23 @@ import openpifpaf
 
 
 class Processor(object):
-    def __init__(self, args):
+    def __init__(self, width_height, args):
+        self.width_height = width_height
+
         # load model
         self.model, _ = openpifpaf.network.nets.factory_from_args(args)
         self.model = self.model.to(args.device)
         self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
         self.device = args.device
-        self.resolution = args.resolution
 
     def single_image(self, b64image):
         imgstr = re.search(r'base64,(.*)', b64image).group(1)
         image_bytes = io.BytesIO(base64.b64decode(imgstr))
         im = PIL.Image.open(image_bytes).convert('RGB')
-        print('input image', im.size, self.resolution)
 
-        landscape = im.size[0] > im.size[1]
-        target_wh = (int(640 * self.resolution), int(480 * self.resolution))
-        if not landscape:
-            target_wh = (int(480 * self.resolution), int(640 * self.resolution))
+        target_wh = self.width_height
+        if (im.size[0] > im.size[1]) != (target_wh[0] > target_wh[1]):
+            target_wh = (target_wh[1], target_wh[0])
         if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
             print('!!! have to resize image to', target_wh, ' from ', im.size)
             im = im.resize(target_wh, PIL.Image.BICUBIC)
