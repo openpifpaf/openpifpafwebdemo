@@ -2,7 +2,7 @@ module.exports = [
 
 // for output to openpifpafwebdemo/static/analysis.js
 {
-  mode: 'production',
+  mode: 'development',
   context: __dirname,
   entry: {
     openpifpafwebdemo: './js/src/frontend.ts',
