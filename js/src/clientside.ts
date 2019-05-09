@@ -2,7 +2,7 @@
 
 import { Camera } from './camera';
 import { Visualization } from './visualization';
-import * as onnx from "onnxjs";
+import * as onnx from 'onnxjs';
 import * as ndarray from 'ndarray';
 import * as ops from 'ndarray-ops';
 
@@ -40,11 +40,11 @@ function drawFields(image: string, modelOutput) {
         vis.context.drawImage(canvasImage,
                                0, 0, vis.canvas.width, vis.canvas.height);
 
-        for (let ii=0; ii < pifC.dims[2]; ++ii) {
-            for (let jj=0; jj < pifC.dims[3]; ++jj) {
+        for (let ii = 0; ii < pifC.dims[2]; ++ii) {
+            for (let jj = 0; jj < pifC.dims[3]; ++jj) {
                 let max_v = 0.0;
                 // for (let kk=0; kk < pifC.dims[1]; ++kk) {
-                for (let kk=5; kk < 6; ++kk) {
+                for (let kk = 5; kk < 6; ++kk) {
                     const v = <number>pifC.get(0, kk, ii, jj);
                     if (v > max_v) {
                         max_v = v;
@@ -92,7 +92,7 @@ let model_loaded = false;
 // create a session
 const session = new onnx.InferenceSession({backendHint: 'webgl'});
 // load the ONNX model file
-session.loadModel("static/openpifpaf-resnet50.onnx").then(() => { model_loaded = true; });
+session.loadModel('static/openpifpaf-resnet50.onnx').then(() => { model_loaded = true; });
 
 
 export async function newImageOnnx() {
@@ -108,7 +108,7 @@ export async function newImageOnnx() {
     const inferenceInputs = preProcess(c.captureContext);
     // execute the model
     console.log('about to run new session');
-    const output = await session.run([inferenceInputs])
+    const output = await session.run([inferenceInputs]);
     console.log('nn done');
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;
