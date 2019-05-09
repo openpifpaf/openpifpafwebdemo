@@ -17,6 +17,7 @@ js/build/
 
 # data
 *.pkl
+*.onnx
 
 # editor
 .vscode

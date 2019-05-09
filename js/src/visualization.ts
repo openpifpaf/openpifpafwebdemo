@@ -45,7 +45,7 @@ export class Visualization {
         this.markerSize = 4;
     }
 
-    draw(image, data) {
+    draw(image: string, data) {
         const scores = data.map((entry: any) => entry.score);
 
         // adjust height of output canvas
