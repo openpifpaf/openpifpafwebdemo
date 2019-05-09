@@ -78,7 +78,7 @@ async def grep_static(dest, url='http://127.0.0.1:5000'):
     http_client.close()
 
 
-def main():
+def cli():
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -131,6 +131,11 @@ def main():
     if not args.disable_cuda and torch.cuda.is_available():
         args.device = torch.device('cuda')
 
+    return args
+
+
+def main():
+    args = cli()
     width_height = (int(640 * args.resolution // 16) * 16 + 1,
                     int(480 * args.resolution // 16) * 16 + 1)
     logging.debug('target width and height = %s', width_height)
