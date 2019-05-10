@@ -155,7 +155,8 @@ def main():
             1.0, grep_static, os.path.join(args.write_static_page, 'index.html'))
 
     tornado.autoreload.watch('openpifpafwebdemo/index.html')
-    tornado.autoreload.watch('openpifpafwebdemo/static/analysis.js')
+    tornado.autoreload.watch('openpifpafwebdemo/static/frontend.js')
+    tornado.autoreload.watch('openpifpafwebdemo/static/clientside.js')
 
     if args.debug:
         version = '{}-{}'.format(
@@ -170,6 +171,14 @@ def main():
             (r'/', RenderTemplate, {
                 'template_name': 'index.html',
                 'title': 'OpenPifPafWebDemo',
+                'description': 'Interactive web browser based demo of OpenPifPaf.',
+                'version': version,
+                'google_analytics': args.google_analytics,
+                'width_height': width_height,
+            }),
+            (r'/client.html', RenderTemplate, {
+                'template_name': 'client.html',
+                'title': 'OpenPifPafWebDemo Serverless',
                 'description': 'Interactive web browser based demo of OpenPifPaf.',
                 'version': version,
                 'google_analytics': args.google_analytics,

@@ -7,6 +7,8 @@ dist/
 
 # generated content
 openpifpafwebdemo/static/analysis.js*
+openpifpafwebdemo/static/frontend.js*
+openpifpafwebdemo/static/clientside.js*
 openpifpafwebdemo/static/index.html
 openpifpafwebdemo/analysis.js*
 gh-pages/
