@@ -1,3 +1,2 @@
-include openpifpafwebdemo/base.html
-include openpifpafwebdemo/index.html
+recursive-include openpifpafwebdemo *.html
 recursive-include openpifpafwebdemo/static *.js *.js.map *.html *.ico *.svg *.css
