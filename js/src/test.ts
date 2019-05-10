@@ -52,7 +52,11 @@ describe('Server Process', () => {
     });
 
     it('serves the javascript files', done => {
-      request.get('http://localhost:5002/static/analysis.js', (error, response, body) => {
+      request.get('http://localhost:5002/static/frontend.js', (error, response, body) => {
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+      request.get('http://localhost:5002/static/clientside.js', (error, response, body) => {
         expect(response.statusCode).to.equal(200);
         done();
       });
