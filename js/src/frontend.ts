@@ -22,24 +22,22 @@ const vis = new Visualization(document.getElementById('visualization'));
 export async function newImage() {
     const data = c.imageData();
 
-    await new Promise((resolve, reject) => {
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', backend_location + '/process', true);
-        xhr.onload = async function() {
-            if (lastProcessing != null) {
-                const duration = Date.now() - lastProcessing;
-                fps = 0.5 * fps + 0.5 * (1000.0 / duration);
-                fpsSpan.textContent = `${fps.toFixed(1)}`;
-            }
-            lastProcessing = Date.now();
+    const response = await fetch(backend_location + '/process', {
+        method: 'post',
+        mode: 'cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    })
+    if (lastProcessing != null) {
+        const duration = Date.now() - lastProcessing;
+        fps = 0.5 * fps + 0.5 * (1000.0 / duration);
+        fpsSpan.textContent = `${fps.toFixed(1)}`;
+    }
+    lastProcessing = Date.now();
 
-            const body = JSON.parse(this['responseText']);
-            await vis.draw(data.image, body);
-            resolve();
-        };
-        xhr.onerror = () => reject();
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(data));
+    response.json().then(body => {
+        console.log(body);
+        vis.draw(data.image, body);
     });
 }
 
