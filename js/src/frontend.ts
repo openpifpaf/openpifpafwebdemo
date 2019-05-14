@@ -27,7 +27,7 @@ export async function newImage() {
         mode: 'cors',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data),
-    })
+    });
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;
         fps = 0.5 * fps + 0.5 * (1000.0 / duration);
