@@ -23,7 +23,7 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'openpifpaf>=0.3.0',
+        'openpifpaf>=0.6.1',
         'tornado>=6',
     ],
     extras_require={
