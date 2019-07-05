@@ -89,7 +89,8 @@ def cli():
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    openpifpaf.decoder.cli(parser, force_complete_pose=False, instance_threshold=0.05)
+    openpifpaf.decoder.cli(parser, force_complete_pose=False,
+                           instance_threshold=0.1, seed_threshold=0.5)
     openpifpaf.network.nets.cli(parser)
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
