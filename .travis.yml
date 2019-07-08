@@ -16,7 +16,7 @@ install:
  - npm run build
  # prefetch model
  - mkdir -p ~/.torch/models
- - cd ~/.torch/models; wget -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.5.0/resnet50block5-pif-paf-edge401-190424-122009-f26a1f53.pkl; cd -
+ - cd ~/.torch/models; wget -q -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.8.0/shufflenetv2x1-pif-paf-edge401-190705-151607-d9a35d7e.pkl; cd -
 script:
  - pylint openpifpafwebdemo --disable=fixme
  - npm run lint
