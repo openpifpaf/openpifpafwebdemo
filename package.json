@@ -28,7 +28,7 @@
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "child_process": "^1.0.2",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "ndarray": "^1.0.18",
     "ndarray-ops": "^1.2.2",
     "onnxjs": "^0.1.6",
