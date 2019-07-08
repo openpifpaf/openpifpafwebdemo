@@ -3,7 +3,7 @@ language: python
 cache:
   directories:
     - $HOME/.cache/pip
-    - $HOME/.torch/models
+    - $HOME/.cache/torch/checkpoints
 python:
  - "3.5"
  - "3.6"
@@ -15,8 +15,8 @@ install:
  - npm install
  - npm run build
  # prefetch model
- - mkdir -p ~/.torch/models
- - cd ~/.torch/models; wget -q -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.8.0/shufflenetv2x1-pif-paf-edge401-190705-151607-d9a35d7e.pkl; cd -
+ - mkdir -p ~/.cache/torch/checkpoints
+ - cd ~/.cache/torch/checkpoints; wget -q -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.8.0/shufflenetv2x1-pif-paf-edge401-190705-151607-d9a35d7e.pkl; cd -
 script:
  - pylint openpifpafwebdemo --disable=fixme
  - npm run lint
