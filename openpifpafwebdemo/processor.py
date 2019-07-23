@@ -33,8 +33,8 @@ class Processor(object):
         width_height = im.size
 
         start = time.time()
-        preprocess = openpifpaf.transforms.image_transform
-        processed_image_cpu = preprocess(im)
+        preprocess = openpifpaf.transforms.EVAL_TRANSFORM
+        processed_image_cpu, _, __ = preprocess(im, [], None)
         processed_image = processed_image_cpu.contiguous().to(self.device, non_blocking=True)
         print('preprocessing time', time.time() - start)
 
