@@ -22,10 +22,15 @@ let lastProcessing: number = null;
 
 const c = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
+vis.markerSize = 10;
 
 
 function drawFields(image: string, modelOutput) {
     const pifC: onnx.Tensor = modelOutput.get('pif_c');
+    const pifR: onnx.Tensor = modelOutput.get('pif_r');
+    const pafC: onnx.Tensor = modelOutput.get('paf_c');
+    const pafR1: onnx.Tensor = modelOutput.get('paf_r1');
+    const pafR2: onnx.Tensor = modelOutput.get('paf_r2');
     console.log({pifC});
 
     // adjust height of output canvas
@@ -34,31 +39,73 @@ function drawFields(image: string, modelOutput) {
     if (vis.canvas.width !== targetSize[0]) vis.canvas.width = targetSize[0];
     if (vis.canvas.height !== targetSize[1]) vis.canvas.height = targetSize[1];
 
+    const connectionColors = [
+        '#1f77b4',
+        '#aec7e8',
+        '#ff7f0e',
+        '#ffbb78',
+        '#2ca02c',
+        '#98df8a',
+        '#d62728',
+        '#ff9896',
+        '#9467bd',
+        '#c5b0d5',
+        '#8c564b',
+        '#c49c94',
+        '#e377c2',
+        '#f7b6d2',
+        '#7f7f7f',
+        '#c7c7c7',
+        '#bcbd22',
+        '#dbdb8d',
+        '#17becf',
+        '#9edae5',
+    ]
+
     // draw on output canvas
     const canvasImage = new Image();
     canvasImage.onload = () => {
-        vis.context.drawImage(canvasImage,
-                               0, 0, vis.canvas.width, vis.canvas.height);
+        vis.context.drawImage(canvasImage, 0, 0, vis.canvas.width, vis.canvas.height);
+
+        for (let ii = 0; ii < pafC.dims[2]; ++ii) {
+            for (let jj = 0; jj < pafC.dims[3]; ++jj) {
+                for (let kk=0; kk < pafC.dims[1]; ++kk) {
+                    const v = <number>pafC.get(0, kk, ii, jj);
+                    if (v < 0.8) continue;
+
+                    const fx1 = jj + <number>pafR1.get(0, kk, 0, ii, jj);
+                    const fy1 = ii + <number>pafR1.get(0, kk, 1, ii, jj);
+                    const fx2 = jj + <number>pafR2.get(0, kk, 0, ii, jj);
+                    const fy2 = ii + <number>pafR2.get(0, kk, 1, ii, jj);
+
+                    vis.context.beginPath()
+                    vis.context.lineWidth = vis.lineWidth;
+                    vis.context.strokeStyle = connectionColors[kk];
+                    vis.context.moveTo(fx1 * vis.canvas.width / (pifC.dims[3] - 1),
+                                       fy1 * vis.canvas.height / (pifC.dims[2] - 1));
+                    vis.context.lineTo(fx2 * vis.canvas.width / (pifC.dims[3] - 1),
+                                       fy2 * vis.canvas.height / (pifC.dims[2] - 1));
+                    vis.context.stroke();
+                }
+            }
+        }
 
         for (let ii = 0; ii < pifC.dims[2]; ++ii) {
             for (let jj = 0; jj < pifC.dims[3]; ++jj) {
-                let max_v = 0.0;
-                // for (let kk=0; kk < pifC.dims[1]; ++kk) {
-                for (let kk = 5; kk < 6; ++kk) {
-                    const v = <number>pifC.get(0, kk, ii, jj);
-                    if (v > max_v) {
-                        max_v = v;
-                    }
-                }
-                if (max_v < 0.8) continue;
+                for (let ll=0; ll < pifC.dims[1]; ++ll) {
+                    const v = <number>pifC.get(0, ll, ii, jj);
+                    if (v < 0.8) continue;
 
-                vis.context.beginPath();
-                vis.context.fillStyle = '#ffffff';
-                vis.context.arc((jj + 0.5) * vis.canvas.width / pifC.dims[3],
-                                (ii + 0.5) * vis.canvas.height / pifC.dims[2],
-                                (max_v - 0.8) / 0.2 * vis.markerSize,
-                                0, 2 * Math.PI);
-                vis.context.fill();
+                    vis.context.beginPath();
+                    vis.context.fillStyle = '#fff';
+                    const fx = jj + <number>pifR.get(0, ll, 0, ii, jj);
+                    const fy = ii + <number>pifR.get(0, ll, 1, ii, jj);
+                    vis.context.arc(fx * vis.canvas.width / (pifC.dims[3] - 1),
+                                    fy * vis.canvas.height / (pifC.dims[2] - 1),
+                                    (v - 0.8) / 0.2 * vis.markerSize,
+                                    0, 2 * Math.PI);
+                    vis.context.fill();
+                }
             }
         }
     };
@@ -85,6 +132,7 @@ function preProcess(ctx: CanvasRenderingContext2D): onnx.Tensor {
     ops.divseq(dataProcessedTensor.pick(0, 2, null, null), 0.225);
     const tensor = new onnx.Tensor(new Float32Array(3 * height * width), 'float32', [1, 3, height, width]);
     (tensor.data as Float32Array).set(dataProcessedTensor.data);
+    console.log({width, height});
     return tensor;
 }
 
@@ -93,23 +141,24 @@ let model_loaded = false;
 const session = new onnx.InferenceSession({backendHint: 'webgl'});
 // load the ONNX model file
 session.loadModel('static/openpifpaf-resnet50.onnx').then(() => { model_loaded = true; });
+// session.loadModel('static/openpifpaf-shufflenetv2x2.onnx').then(() => { model_loaded = true; });
 
 
 export async function newImageOnnx() {
-    console.log({model_loaded});
     if (!model_loaded) {
         console.log('model not loaded yet');
+        await new Promise(resolve => setTimeout(() => resolve(), 200));
         return;
     }
-    console.log('getting a new image');
 
     // generate model input
     const data = c.imageData();
     const inferenceInputs = preProcess(c.captureContext);
     // execute the model
     console.log('about to run new session');
+    const startSession = Date.now()
     const output = await session.run([inferenceInputs]);
-    console.log('nn done');
+    console.log({'nn done': Date.now() - startSession});
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;
         console.log({duration});
@@ -120,8 +169,6 @@ export async function newImageOnnx() {
 
     // process output
     drawFields(data.image, output);
-
-    console.log('done');
 }
 
 
@@ -129,7 +176,6 @@ async function loop_forever() {
     while (true) {
         await newImageOnnx();
         await new Promise(resolve => requestAnimationFrame(() => resolve()));
-        await new Promise(resolve => setTimeout(() => resolve(), 500));
     }
 }
 loop_forever();

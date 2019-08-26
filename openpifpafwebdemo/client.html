@@ -12,6 +12,16 @@
 
 
 {% block content %}
+<p>
+  <b>Experimental demo</b> of a serverless version of OpenPifPaf.
+  Only static assets are loaded from the web. All computation happens on
+  the client side.
+  Currently only shows a representation of the fields without decoding
+  the poses. Input image size is {{width_height[0]}}x{{width_height[1]}}.
+</p>
+<p>
+  Only works in landscape mode. Needs access to a camera (use Safari on iOS).
+</p>
 <div style="position:relative;">
   <div id="capture">
     <video style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
