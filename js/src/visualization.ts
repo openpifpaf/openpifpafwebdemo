@@ -57,12 +57,12 @@ export class Visualization {
         }
 
         // draw on output canvas
-        let i = new Image();
-        i.onload = () => {
-            this.context.drawImage(i, 0, 0, this.canvas.width, this.canvas.height);
+        const canvasImage = new Image();
+        canvasImage.onload = () => {
+            this.context.drawImage(canvasImage, 0, 0, this.canvas.width, this.canvas.height);
             data.forEach((entry: any) => this.drawSkeleton(entry.coordinates, entry.detection_id));
         };
-        i.src = image;
+        canvasImage.src = image;
     }
 
     drawSkeletonLines(keypoints) {
@@ -96,5 +96,62 @@ export class Visualization {
                              0, 2 * Math.PI);
             this.context.fill();
         });
+    }
+
+    drawFields(image: string, pifC, pifR, pafC, pafR1, pafR2) {
+        // adjust height of output canvas
+        const landscape = pifC.dims[3] > pifC.dims[2];
+        const targetSize = landscape ? this.originalCanvasSize : this.originalCanvasSize.slice().reverse();
+        if (this.canvas.width !== targetSize[0]) this.canvas.width = targetSize[0];
+        if (this.canvas.height !== targetSize[1]) this.canvas.height = targetSize[1];
+
+        // draw on output canvas
+        const canvasImage = new Image();
+        canvasImage.onload = () => {
+            this.context.drawImage(canvasImage, 0, 0, this.canvas.width, this.canvas.height);
+
+            const xScale = this.canvas.width / (pifC.dims[3] - 1);
+            const yScale = this.canvas.height / (pifC.dims[2] - 1);
+
+            for (let ii = 0; ii < pafC.dims[2]; ++ii) {
+                for (let jj = 0; jj < pafC.dims[3]; ++jj) {
+                    for (let kk = 0; kk < pafC.dims[1]; ++kk) {
+                        const v = <number>pafC.get(0, kk, ii, jj);
+                        if (v < 0.8) continue;
+
+                        const fx1 = jj + <number>pafR1.get(0, kk, 0, ii, jj);
+                        const fy1 = ii + <number>pafR1.get(0, kk, 1, ii, jj);
+                        const fx2 = jj + <number>pafR2.get(0, kk, 0, ii, jj);
+                        const fy2 = ii + <number>pafR2.get(0, kk, 1, ii, jj);
+
+                        this.context.beginPath();
+                        this.context.lineWidth = this.lineWidth;
+                        this.context.strokeStyle = COLORS[kk];
+                        this.context.moveTo(fx1 * xScale, fy1 * yScale);
+                        this.context.lineTo(fx2 * xScale, fy2 * yScale);
+                        this.context.stroke();
+                    }
+                }
+            }
+
+            for (let ii = 0; ii < pifC.dims[2]; ++ii) {
+                for (let jj = 0; jj < pifC.dims[3]; ++jj) {
+                    for (let ll = 0; ll < pifC.dims[1]; ++ll) {
+                        const v = <number>pifC.get(0, ll, ii, jj);
+                        if (v < 0.8) continue;
+
+                        this.context.beginPath();
+                        this.context.fillStyle = '#fff';
+                        const fx = jj + <number>pifR.get(0, ll, 0, ii, jj);
+                        const fy = ii + <number>pifR.get(0, ll, 1, ii, jj);
+                        this.context.arc(fx * xScale, fy * yScale,
+                                         (v - 0.8) / 0.2 * this.markerSize,
+                                         0, 2 * Math.PI);
+                        this.context.fill();
+                    }
+                }
+            }
+        };
+        canvasImage.src = image;
     }
 }
