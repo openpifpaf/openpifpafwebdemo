@@ -42,7 +42,7 @@ class Processor(object):
         keypoint_sets, scores = self.processor.keypoint_sets(all_fields)
 
         # normalize scale
-        keypoint_sets[:, :, 0] /= processed_image_cpu.shape[2]
-        keypoint_sets[:, :, 1] /= processed_image_cpu.shape[1]
+        keypoint_sets[:, :, 0] /= (processed_image_cpu.shape[2] - 1)
+        keypoint_sets[:, :, 1] /= (processed_image_cpu.shape[1] - 1)
 
         return keypoint_sets, scores, width_height
