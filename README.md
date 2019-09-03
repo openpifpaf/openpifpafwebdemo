@@ -15,7 +15,15 @@ Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arX
 }
 ```
 
-# Use
+# Online
+
+Live demo: https://vita-epfl.github.io/openpifpafwebdemo/
+
+
+# Use Locally
+
+This runs the full pipeline (neural network and proper decoder) in Python
+and visualizes the output in the browser.
 
 Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
 
@@ -26,7 +34,7 @@ python3 -m openpifpafwebdemo.server
 
 Open a web browser at `http://localhost:5000` to view the web interface.
 
-# Example
+## Example
 
 <img src="docs/wave3.gif" height=250 alt="example image" />
 
