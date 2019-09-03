@@ -98,7 +98,7 @@ export class Visualization {
         });
     }
 
-    drawFields(image: string, pifC, pifR, pafC, pafR1, pafR2) {
+    drawFields(image: string, pifC, pifR, pafC, pafR1, pafR2, threshold: number) {
         // adjust height of output canvas
         const landscape = pifC.dims[3] > pifC.dims[2];
         const targetSize = landscape ? this.originalCanvasSize : this.originalCanvasSize.slice().reverse();
@@ -117,7 +117,7 @@ export class Visualization {
                 for (let jj = 0; jj < pafC.dims[3]; ++jj) {
                     for (let kk = 0; kk < pafC.dims[1]; ++kk) {
                         const v = <number>pafC.get(0, kk, ii, jj);
-                        if (v < 0.8) continue;
+                        if (v < threshold) continue;
 
                         const fx1 = jj + <number>pafR1.get(0, kk, 0, ii, jj);
                         const fy1 = ii + <number>pafR1.get(0, kk, 1, ii, jj);
@@ -138,14 +138,14 @@ export class Visualization {
                 for (let jj = 0; jj < pifC.dims[3]; ++jj) {
                     for (let ll = 0; ll < pifC.dims[1]; ++ll) {
                         const v = <number>pifC.get(0, ll, ii, jj);
-                        if (v < 0.8) continue;
+                        if (v < threshold) continue;
 
                         this.context.beginPath();
                         this.context.fillStyle = '#fff';
                         const fx = jj + <number>pifR.get(0, ll, 0, ii, jj);
                         const fy = ii + <number>pifR.get(0, ll, 1, ii, jj);
                         this.context.arc(fx * xScale, fy * yScale,
-                                         (v - 0.8) / 0.2 * this.markerSize,
+                                         (v - threshold) / threshold * this.markerSize,
                                          0, 2 * Math.PI);
                         this.context.fill();
                     }

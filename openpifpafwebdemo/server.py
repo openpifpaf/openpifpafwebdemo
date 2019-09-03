@@ -184,6 +184,10 @@ def main():
                 'version': version,
                 'google_analytics': args.google_analytics,
                 'width_height': width_height,
+                'models': [
+                    {'name': 'resnet18', 'url': 'static/openpifpaf-resnet18.onnx'},
+                    {'name': 'resnet50', 'url': 'static/openpifpaf-resnet50.onnx'},
+                ],
             }),
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),

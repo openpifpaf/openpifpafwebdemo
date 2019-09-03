@@ -33,7 +33,7 @@ function drawFields(image: string, modelOutput) {
     const pafR2: onnx.Tensor = modelOutput.get('paf_r2');
     console.log({pifC});
 
-    vis.drawFields(image, pifC, pifR, pafC, pafR1, pafR2);
+    vis.drawFields(image, pifC, pifR, pafC, pafR1, pafR2, 0.8);
 }
 
 
@@ -59,20 +59,32 @@ function preProcess(ctx: CanvasRenderingContext2D): onnx.Tensor {
     return tensor;
 }
 
-const modelFile = 'static/openpifpaf-resnet50.onnx';
-// const modelFile = 'static/openpifpaf-shufflenetv2x2.onnx';
-// const modelFile = 'static/openpifpaf-mobilenetv2.onnx';
-console.log({modelFile});
 
-let model_loaded = false;
-// create a session
-const session = new onnx.InferenceSession({backendHint: 'webgl'});
-// load the ONNX model file
-session.loadModel(modelFile).then(() => { model_loaded = true; });
+// load the ONNX model
+let session = null;
+let modelLoaded = null;
+const modelSelectorDiv = <HTMLDivElement>document.getElementById('model-selector');
+function loadModel(modelData: {name: string, url: string}) {
+    modelLoaded = null;
+
+    session = new onnx.InferenceSession({backendHint: 'webgl'});
+    session.loadModel(modelData.url).then(() => { modelLoaded = modelData; });
+}
+
+// wire up model selection ui
+const inputElements = modelSelectorDiv.getElementsByTagName('input');
+for (let radioElement of inputElements) {
+    radioElement.onchange = (ev: any) => {
+        console.log(radioElement.dataset);
+        loadModel({name: radioElement.dataset.name, url: radioElement.dataset.url});
+    };
+}
+inputElements[0].checked = true;
+inputElements[0].onchange(null);
 
 
 export async function newImageOnnx() {
-    if (!model_loaded) {
+    if (!modelLoaded) {
         console.log('model not loaded yet');
         await new Promise(resolve => setTimeout(() => resolve(), 200));
         return;

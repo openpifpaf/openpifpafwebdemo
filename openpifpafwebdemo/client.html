@@ -22,6 +22,14 @@
 <p>
   Only works in landscape mode. Needs access to a camera (use Safari on iOS).
 </p>
+
+<div id="model-selector">
+  {% for m in models %}
+    <input name="model" type="radio" id="selector-{{m['name']}}" data-name="{{m['name']}}" data-url="{{m['url']}}" />
+    <label for="selector-{{m['name']}}">{{m['name']}}</label>
+  {% end %}
+</div>
+
 <div style="position:relative;">
   <div id="capture">
     <video style="width:50px; position:absolute;" controls autoplay muted playsinline></video>
