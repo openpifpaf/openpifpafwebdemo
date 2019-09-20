@@ -10,7 +10,7 @@ export class Camera {
     buttonNextCamera: HTMLButtonElement;
     currentCamera?: string;
     captureCounter: number;
-    cameraIds: string[];
+    facingMode: string;
     cameraId?: string;
 
     constructor(ui: HTMLElement) {
@@ -22,44 +22,27 @@ export class Camera {
         this.captureContext = this.captureCanvas.getContext('2d');
         this.buttonNextCamera = <HTMLButtonElement>ui.getElementsByClassName('nextCamera')[0];
         this.captureCounter = 0;
-        navigator.mediaDevices.enumerateDevices().then(devices => {
-            this.cameraIds = devices
-                .filter(device => device.kind === 'videoinput')
-                .map(device => device.deviceId);
 
-            // On iOS, all deviceId and label for devices are empty.
-            // So making up labels here that should be used for facingMode instead.
-            if (this.cameraIds.length >= 2 && this.cameraIds.every(i => i === '')) {
-                this.cameraIds = ['user', 'environment'];
-            }
-        }).catch(function(err) {
-            console.log(err.name + ': ' + err.message);
-        });
-
-
-        this.setCamera();
+        this.facingMode = null;
+        this.setCamera('user');
 
         this.buttonNextCamera.onclick = this.nextCamera.bind(this);
     }
 
-    async setCamera(cameraId?: string) {
-        if (cameraId && cameraId === this.cameraId) return;
+    async setCamera(facingMode: string) {
+        if (facingMode === this.facingMode) return;
+        this.facingMode = facingMode;
 
         let capabilities = {
             ...defaultCapabilities,
             video: {
                 ...(<MediaTrackConstraints>defaultCapabilities.video),
+                facingMode: this.facingMode,
             }
         };
-        if (cameraId === 'user' || cameraId === 'environment') {
-            capabilities.video.facingMode = cameraId;
-        } else {
-            capabilities.video.deviceId = cameraId;
-        }
 
         const stream = await navigator.mediaDevices.getUserMedia(capabilities);
         this.video.srcObject = stream;
-        this.cameraId = cameraId;
     }
 
     imageData() {
@@ -71,24 +54,22 @@ export class Camera {
 
         // capture
         this.captureCounter += 1;
+
+        // draw
+        this.captureContext.save();
+        if (this.facingMode == 'user') {
+            this.captureContext.translate(this.captureCanvas.width, 0);
+            this.captureContext.scale(-1, 1);
+        }
         this.captureContext.drawImage(
             this.video, 0, 0, this.captureCanvas.width, this.captureCanvas.height);
+        this.captureContext.restore();
+
         return {image_id: this.captureCounter, image: this.captureCanvas.toDataURL()};
     }
 
     nextCamera() {
-        let nextCameraId = undefined;
-        if (this.cameraId && this.cameraIds.length > 1) {
-            const currentCameraIndex = this.cameraIds.indexOf(this.cameraId);
-            let nextCameraIndex = currentCameraIndex + 1;
-            if (nextCameraIndex >= this.cameraIds.length) nextCameraIndex = 0;
-            nextCameraId = this.cameraIds[nextCameraIndex];
-        } else if (this.cameraIds.length > 1) {
-            // assume the default (unset this.cameraId) was camera 0, so go to 1
-            nextCameraId = this.cameraIds[1];
-        } else {
-            nextCameraId = this.cameraIds[0];
-        }
-        this.setCamera(nextCameraId);
+        const facingMode = this.facingMode === 'user' ? 'environment' : 'user';
+        this.setCamera(facingMode);
     }
 }

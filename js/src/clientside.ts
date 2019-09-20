@@ -93,10 +93,24 @@ export async function newImageOnnx() {
     // generate model input
     const data = c.imageData();
     const inferenceInputs = preProcess(c.captureContext);
+    const [n_batch, n_colors, height, width] = inferenceInputs.dims;
+    if (height > width) {
+        alert('use landscape mode');
+        return;
+    }
+
     // execute the model
     console.log('about to run new session');
     const startSession = Date.now();
-    const output = await session.run([inferenceInputs]);
+    let output = null;
+    try {
+        output = await session.run([inferenceInputs]);
+    }
+    catch(err) {
+        console.error(err.message);
+        alert(err.message);
+        return;
+    }
     console.log({'nn done': Date.now() - startSession});
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;

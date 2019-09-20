@@ -57,12 +57,21 @@ pre, code {
     font-family: Menlo, "Courier New", monospace;
 }
 
+#capture {
+    position: fixed;
+    top: 70px;
+}
+
+#capture video {
+    width: 50px;
+}
+
 button {
     display: inline-block;
     cursor: pointer;
 
     padding: 5px 10px;
-    margin: 5px 0;
+    margin: 0 5px;
 
     color: #333;
     font-size: 110%;
@@ -71,7 +80,7 @@ button {
 
     text-align: center;
     white-space: nowrap;
-    vertical-align: middle;
+    vertical-align: top;
 
     background-color: #fff;
     border: 1px solid #ccc;
