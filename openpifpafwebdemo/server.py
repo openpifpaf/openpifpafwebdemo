@@ -185,8 +185,10 @@ def main():
                 'google_analytics': args.google_analytics,
                 'width_height': width_height,
                 'models': [
-                    {'displayname': 'ResNet18 (44MB)', 'shortname': 'resnet18', 'url': 'static/openpifpaf-resnet18.onnx'},
-                    {'displayname': 'ResNet50 (97MB)', 'shortname': 'resnet50', 'url': 'static/openpifpaf-resnet50.onnx'},
+                    {'displayname': 'ResNet18 (44MB)', 'shortname': 'resnet18',
+                     'url': 'static/openpifpaf-resnet18.onnx'},
+                    {'displayname': 'ResNet50 (97MB)', 'shortname': 'resnet50',
+                     'url': 'static/openpifpaf-resnet50.onnx'},
                 ],
             }),
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {

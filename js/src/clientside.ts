@@ -106,7 +106,7 @@ export async function newImageOnnx() {
     try {
         output = await session.run([inferenceInputs]);
     }
-    catch(err) {
+    catch (err) {
         console.error(err.message);
         alert(err.message);
         return;
