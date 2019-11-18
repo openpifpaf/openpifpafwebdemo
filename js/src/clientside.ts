@@ -33,7 +33,7 @@ function drawFields(image: string, modelOutput) {
     const pafR2: onnx.Tensor = modelOutput.get('paf_r2');
     console.log({pifC});
 
-    vis.drawFields(image, pifC, pifR, pafC, pafR1, pafR2, 0.8);
+    return vis.drawFields(image, pifC, pifR, pafC, pafR1, pafR2, 0.8);
 }
 
 
@@ -121,7 +121,7 @@ export async function newImageOnnx() {
     lastProcessing = Date.now();
 
     // process output
-    drawFields(data.image, output);
+    await drawFields(data.image, output);
 }
 
 

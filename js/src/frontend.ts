@@ -35,10 +35,9 @@ export async function newImage() {
     }
     lastProcessing = Date.now();
 
-    response.json().then(body => {
-        console.log(body);
-        vis.draw(data.image, body);
-    });
+    const body = await response.json();
+    console.log(body);
+    await vis.draw(data.image, body);
 }
 
 
