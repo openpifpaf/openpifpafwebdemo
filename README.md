@@ -2,30 +2,16 @@
 
 [![Build Status](https://travis-ci.org/vita-epfl/openpifpafwebdemo.svg?branch=master)](https://travis-ci.org/vita-epfl/openpifpafwebdemo)
 
-> Demo of "PifPaf: Composite Fields for Human Pose Estimation".
-
-Links: [main repository](https://github.com/vita-epfl/openpifpaf), [paper on arXiv](https://arxiv.org/abs/1903.06593).
-
-```
-@article{kreiss2019pifpaf,
-  title = {PifPaf: Composite Fields for Human Pose Estimation},
-  author = {Kreiss, Sven and Bertoni, Lorenzo and Alahi, Alexandre},
-  journal = {CVPR},
-  year = {2019}
-}
-```
-
-# Online
-
+Links:
+[main repository](https://github.com/vita-epfl/openpifpaf) and
+[CVPR2019 paper](http://openaccess.thecvf.com/content_CVPR_2019/html/Kreiss_PifPaf_Composite_Fields_for_Human_Pose_Estimation_CVPR_2019_paper.html).<br />
 Live demo: https://vita-epfl.github.io/openpifpafwebdemo/
 
 
 # Use Locally
 
-This runs the full pipeline (neural network and proper decoder) in Python
-and visualizes the output in the browser.
-
-Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
+Run the full pipeline (neural network and decoder) in Python
+and visualize the output in the browser:
 
 ```sh
 pip3 install openpifpafwebdemo
@@ -33,6 +19,9 @@ python3 -m openpifpafwebdemo.server
 ```
 
 Open a web browser at `http://localhost:5000` to view the web interface.
+
+_Troubleshooting_: Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
+
 
 ## Example
 
@@ -66,4 +55,17 @@ curl -v -X POST -H "Content-Type: application/json" --data @test_image.json http
 * Re-using existing connection! (#0) with host localhost
 * Connected to localhost (127.0.0.1) port 5000 (#0)
 * Connection #0 to host localhost left intact
+```
+
+
+# Citation
+
+```
+@InProceedings{kreiss2019pifpaf,
+  author = {Kreiss, Sven and Bertoni, Lorenzo and Alahi, Alexandre},
+  title = {PifPaf: Composite Fields for Human Pose Estimation},
+  booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month = {June},
+  year = {2019}
+}
 ```
