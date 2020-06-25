@@ -89,9 +89,11 @@ def cli():
         description=__doc__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+
     openpifpaf.decoder.cli(parser, force_complete_pose=False,
                            instance_threshold=0.1, seed_threshold=0.5)
-    openpifpaf.network.nets.cli(parser)
+    openpifpaf.network.cli(parser)
+
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
     parser.add_argument('--resolution', default=0.4, type=float,
@@ -126,6 +128,9 @@ def cli():
 
     # log
     logging.basicConfig(level=logging.INFO if not args.debug else logging.DEBUG)
+
+    # configure
+    openpifpaf.network.configure(args)
 
     # config
     logging.debug('host=%s, port=%d', args.host, args.port)
