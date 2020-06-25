@@ -21,12 +21,6 @@ import openpifpaf
 from .processor import Processor
 from . import __version__ as VERSION
 
-# monkey patch for Python 3.5
-if not hasattr(random, 'choices'):
-    def random_choices(population, *, k=1):
-        return [random.choice(population) for _ in range(k)]
-    random.choices = random_choices
-
 
 # pylint: disable=abstract-method
 class PostHandler(RequestHandler):
