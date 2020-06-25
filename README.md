@@ -23,13 +23,9 @@ Open a web browser at `http://localhost:5000` to view the web interface.
 _Troubleshooting_: Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
 
 
-## Example
+__Example:__
 
 <img src="docs/wave3.gif" height=250 alt="example image" />
-
-To install from source and set up for development use
-`pip install --editable ".[test]"`, install the frontend dependencies with
-`npm install` and then create the frontend JavaScript code with `npm run build`.
 
 
 # API
@@ -56,6 +52,13 @@ curl -v -X POST -H "Content-Type: application/json" --data @test_image.json http
 * Connected to localhost (127.0.0.1) port 5000 (#0)
 * Connection #0 to host localhost left intact
 ```
+
+
+# Dev
+
+To install from source and set up for development use
+`pip install --editable ".[test]"`, install the frontend dependencies with
+`npm install` and then create the frontend JavaScript code with `npm run build`. For continuous rebuilds of the js package, use `npm run watch`.
 
 
 # Citation

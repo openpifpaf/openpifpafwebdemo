@@ -12,7 +12,7 @@ describe('Server Process', () => {
   envVars.PORT = '5002';
   const server_process = child_process.spawn('python', [
     '-m', 'openpifpafwebdemo.server',
-    '--checkpoint', 'shufflenetv2x1',
+    '--no-download-progress',
   ], {
       env: envVars,
   });

@@ -14,7 +14,7 @@ class Processor(object):
         self.width_height = width_height
 
         # load model
-        self.model, _ = openpifpaf.network.nets.factory_from_args(args)
+        self.model, _ = openpifpaf.network.factory_from_args(args)
         self.model = self.model.to(args.device)
         self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
         self.device = args.device
@@ -34,15 +34,18 @@ class Processor(object):
 
         start = time.time()
         preprocess = openpifpaf.transforms.EVAL_TRANSFORM
-        processed_image_cpu, _, __ = preprocess(im, [], None)
-        processed_image = processed_image_cpu.contiguous().to(self.device, non_blocking=True)
+        processed_image, _, __ = preprocess(im, [], None)
         print('preprocessing time', time.time() - start)
 
-        all_fields = self.processor.fields(torch.unsqueeze(processed_image.float(), 0))[0]
-        keypoint_sets, scores = self.processor.keypoint_sets(all_fields)
+        image_tensors_batch = torch.unsqueeze(processed_image.float(), 0)
+        pred_anns = self.processor.batch(self.model, image_tensors_batch, device=self.device)[0]
+
+        keypoint_sets = [ann.data for ann in pred_anns]
+        scores = [ann.score() for ann in pred_anns]
 
         # normalize scale
-        keypoint_sets[:, :, 0] /= (processed_image_cpu.shape[2] - 1)
-        keypoint_sets[:, :, 1] /= (processed_image_cpu.shape[1] - 1)
+        for kps in keypoint_sets:
+            kps[:, 0] /= (processed_image.shape[2] - 1)
+            kps[:, 1] /= (processed_image.shape[1] - 1)
 
         return keypoint_sets, scores, width_height
