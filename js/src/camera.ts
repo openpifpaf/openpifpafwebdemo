@@ -8,9 +8,11 @@ export class Camera {
     originalCaptureCanvasSize: number[];
     captureContext: CanvasRenderingContext2D;
     buttonNextCamera: HTMLButtonElement;
+    buttonScreenCapture: HTMLButtonElement;
     currentCamera?: string;
     captureCounter: number;
-    facingMode: string;
+    modes: string[];
+    mode: string;
     cameraId?: string;
 
     constructor(ui: HTMLElement) {
@@ -21,27 +23,36 @@ export class Camera {
                                           this.captureCanvas.height];
         this.captureContext = this.captureCanvas.getContext('2d');
         this.buttonNextCamera = <HTMLButtonElement>ui.getElementsByClassName('nextCamera')[0];
+        this.buttonScreenCapture = <HTMLButtonElement>ui.getElementsByClassName('screenCapture')[0];
         this.captureCounter = 0;
 
-        this.facingMode = null;
+        this.modes = ['user', 'environment', 'screen'];
+        this.mode = null;
         this.setCamera('user');
 
         this.buttonNextCamera.onclick = this.nextCamera.bind(this);
+        this.buttonScreenCapture.onclick = this.screenCapture.bind(this);
     }
 
-    async setCamera(facingMode: string) {
-        if (facingMode === this.facingMode) return;
-        this.facingMode = facingMode;
+    async setCamera(mode: string) {
+        if (mode === this.mode) return;
+        this.mode = mode;
 
-        let capabilities = {
-            ...defaultCapabilities,
-            video: {
-                ...(<MediaTrackConstraints>defaultCapabilities.video),
-                facingMode: this.facingMode,
-            }
-        };
+        let stream = null;
+        if (['user', 'environment'].includes(this.mode)) {
+            let capabilities = {
+                ...defaultCapabilities,
+                video: {
+                    ...(<MediaTrackConstraints>defaultCapabilities.video),
+                    facingMode: this.mode,
+                }
+            };
 
-        const stream = await navigator.mediaDevices.getUserMedia(capabilities);
+            stream = await navigator.mediaDevices.getUserMedia(capabilities);
+        } else {
+            // @ts-ignore
+            stream = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+        }
         this.video.srcObject = stream;
     }
 
@@ -57,7 +68,7 @@ export class Camera {
 
         // draw
         this.captureContext.save();
-        if (this.facingMode === 'user') {
+        if (this.mode === 'user') {
             this.captureContext.translate(this.captureCanvas.width, 0);
             this.captureContext.scale(-1, 1);
         }
@@ -69,7 +80,11 @@ export class Camera {
     }
 
     nextCamera() {
-        const facingMode = this.facingMode === 'user' ? 'environment' : 'user';
+        const facingMode = this.mode === 'environment' ? 'user' : 'environment';
         this.setCamera(facingMode);
+    }
+
+    screenCapture() {
+        this.setCamera('screen');
     }
 }
