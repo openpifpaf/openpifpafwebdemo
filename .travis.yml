@@ -4,6 +4,8 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $HOME/.cache/torch/checkpoints
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log
 python:
  - "3.6"
  - "3.7"
