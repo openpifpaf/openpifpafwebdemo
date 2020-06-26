@@ -5,7 +5,8 @@
 Links:
 [main repository](https://github.com/vita-epfl/openpifpaf) and
 [CVPR2019 paper](http://openaccess.thecvf.com/content_CVPR_2019/html/Kreiss_PifPaf_Composite_Fields_for_Human_Pose_Estimation_CVPR_2019_paper.html).<br />
-Live demo: https://vita-epfl.github.io/openpifpafwebdemo/
+Live demo: https://vitademo.epfl.ch<br />
+Serverless live demo: https://vita-epfl.github.io/openpifpafwebdemo/
 
 
 # Use Locally
