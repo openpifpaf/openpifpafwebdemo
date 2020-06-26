@@ -51,7 +51,14 @@ export class Camera {
             stream = await navigator.mediaDevices.getUserMedia(capabilities);
         } else {
             // @ts-ignore
-            stream = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+            stream = await navigator.mediaDevices.getDisplayMedia({
+                video: {
+                    cursor: 'never',
+                    logicalSurface: true,
+                    width: this.captureCanvas.width,
+                },
+                audio: false,
+            });
         }
         this.video.srcObject = stream;
     }

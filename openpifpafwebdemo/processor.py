@@ -19,17 +19,18 @@ class Processor(object):
         self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
         self.device = args.device
 
-    def single_image(self, b64image):
+    def single_image(self, b64image, *, resize=True):
         imgstr = re.search(r'base64,(.*)', b64image).group(1)
         image_bytes = io.BytesIO(base64.b64decode(imgstr))
         im = PIL.Image.open(image_bytes).convert('RGB')
 
-        target_wh = self.width_height
-        if (im.size[0] > im.size[1]) != (target_wh[0] > target_wh[1]):
-            target_wh = (target_wh[1], target_wh[0])
-        if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
-            print('!!! have to resize image to', target_wh, ' from ', im.size)
-            im = im.resize(target_wh, PIL.Image.BICUBIC)
+        if resize:
+            target_wh = self.width_height
+            if (im.size[0] > im.size[1]) != (target_wh[0] > target_wh[1]):
+                target_wh = (target_wh[1], target_wh[0])
+            if im.size[0] != target_wh[0] or im.size[1] != target_wh[1]:
+                print('!!! have to resize image to', target_wh, ' from ', im.size)
+                im = im.resize(target_wh, PIL.Image.BICUBIC)
         width_height = im.size
 
         start = time.time()
