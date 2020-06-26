@@ -24,8 +24,9 @@ from . import __version__ as VERSION
 
 # pylint: disable=abstract-method
 class PostHandler(RequestHandler):
-    def initialize(self, processor):
+    def initialize(self, processor, *, demo_password):
         self.processor = processor  # pylint: disable=attribute-defined-outside-init
+        self.demo_password = demo_password  # pylint: disable=attribute-defined-outside-init
 
     def set_default_headers(self):
         self.set_header('Access-Control-Allow-Origin', '*')
@@ -42,7 +43,13 @@ class PostHandler(RequestHandler):
             self.write('no image provided')
             return
 
-        keypoint_sets, scores, width_height = self.processor.single_image(image)
+        resize = True
+        if self.demo_password:
+            if self.get_argument('pw', None) != self.demo_password:
+                self.write(json.dumps({'error': 'demo in progress'}))
+                return
+            resize = False
+        keypoint_sets, scores, width_height = self.processor.single_image(image, resize=resize)
         keypoint_sets = [{
             'coordinates': keypoints.tolist(),
             'detection_id': i,
@@ -63,6 +70,25 @@ class RenderTemplate(tornado.web.RequestHandler):
         self.info = info  # pylint: disable=attribute-defined-outside-init
 
     def get(self):
+        self.render(self.template_name, **self.info)
+
+    def head(self):
+        pass
+
+
+class Index(tornado.web.RequestHandler):
+    def initialize(self, template_name, demo_password, **info):
+        self.template_name = template_name  # pylint: disable=attribute-defined-outside-init
+        self.demo_password = demo_password  # pylint: disable=attribute-defined-outside-init
+        self.info = info  # pylint: disable=attribute-defined-outside-init
+
+    def get(self):
+        password = self.get_argument('pw', default=None)
+        if self.demo_password and password == self.demo_password:
+            self.info['width_height'] = (801, 601)
+        elif self.demo_password:
+            self.write('Demo currently in progress. Check back later.')
+            return
         self.render(self.template_name, **self.info)
 
     def head(self):
@@ -95,6 +121,8 @@ def cli():
                               'Will be rounded to multiples of 16.'))
     parser.add_argument('--write-static-page', default=None,
                         help='directory in which to create a static version of this page')
+    parser.add_argument('--demo-password', default=None,
+                        help='password that allows better performance for a demo')
     parser.add_argument('--debug', default=False, action='store_true',
                         help='debug messages and autoreload')
     parser.add_argument('--google-analytics',
@@ -168,8 +196,11 @@ def main():
 
     app = tornado.web.Application(
         [
-            (r'/', RenderTemplate, {
+            (r'/', Index, {
                 'template_name': 'index.html',
+                'demo_password': args.demo_password,
+
+                # HTML template parameters
                 'title': 'OpenPifPafWebDemo',
                 'description': 'Interactive web browser based demo of OpenPifPaf.',
                 'version': version,
@@ -193,7 +224,10 @@ def main():
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),
             }),
-            (r'/process', PostHandler, {'processor': processor_singleton}),
+            (r'/process', PostHandler, {
+                'processor': processor_singleton,
+                'demo_password': args.demo_password,
+            }),
         ],
         debug=args.debug,
         static_path=static_path,
