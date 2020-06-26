@@ -61,6 +61,9 @@ To install from source and set up for development use
 `pip install --editable ".[test]"`, install the frontend dependencies with
 `npm install` and then create the frontend JavaScript code with `npm run build`. For continuous rebuilds of the js package, use `npm run watch`.
 
+Run the server process with `--debug` to get salted version numbers to break
+the browser cache for static assets and autoreload when source files change.
+
 
 # Citation
 
