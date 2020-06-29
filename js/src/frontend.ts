@@ -34,16 +34,25 @@ export async function newImage() {
     }
     lastProcessing = Date.now();
 
-    const body = await response.json();
-    console.log(body);
-    await vis.draw(data.image, body);
+    const predPromise = response.json();
+
+    // return a promise that contains the image and the resolved prediction
+    return new Promise(resolve => predPromise.then(pred => {
+        console.log(pred);
+        resolve([data.image, pred]);
+    }));
 }
 
 
 async function loop_forever() {
+    let prev_image_pred = await newImage();
     while (true) {
-        await newImage();
-        await new Promise(resolve => requestAnimationFrame(() => resolve()));
+        let [image_pred, _, __] = await Promise.all([
+            newImage(),
+            vis.draw(prev_image_pred[0], prev_image_pred[1]),
+            new Promise(resolve => requestAnimationFrame(() => resolve())),
+        ]);
+        prev_image_pred = image_pred;
     }
 }
 loop_forever();
