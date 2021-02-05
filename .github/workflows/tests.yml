@@ -68,6 +68,7 @@ jobs:
         python -c "import openpifpaf; print(openpifpaf.__version__)"
         python -c "import openpifpafwebdemo; print(openpifpafwebdemo.__version__)"
     - name: Prefetch model
+      if: matrix.os != 'windows-latest'
       run: |
         mkdir -p ~/.cache/torch/checkpoints
         cd ~/.cache/torch/checkpoints
