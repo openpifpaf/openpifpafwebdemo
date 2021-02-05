@@ -67,12 +67,6 @@ jobs:
         python --version
         python -c "import openpifpaf; print(openpifpaf.__version__)"
         python -c "import openpifpafwebdemo; print(openpifpafwebdemo.__version__)"
-    - name: Prefetch model
-      if: matrix.os != 'windows-latest'
-      run: |
-        mkdir -p ~/.cache/torch/checkpoints
-        cd ~/.cache/torch/checkpoints
-        wget -q -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.8.0/shufflenetv2x1-pif-paf-edge401-190705-151607-d9a35d7e.pkl
     - name: Lint Python
       run: |
         pylint openpifpafwebdemo --disable=fixme
