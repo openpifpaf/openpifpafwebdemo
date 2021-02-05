@@ -23,7 +23,8 @@ jobs:
         python -m openpifpaf.predict docs/example.png
     - uses: actions/upload-artifact@v2
       with:
-        path: .cache/torch/
+        name: artifact
+        path: ~/.cache/torch/
 
   build:
     needs: [prefetch]
@@ -62,7 +63,7 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: artifact
-        path: .cache/torch/
+        path: ~/.cache/torch/
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
