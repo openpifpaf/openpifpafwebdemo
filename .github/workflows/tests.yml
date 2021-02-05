@@ -1,0 +1,81 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: 3.6
+            torch: 1.7.1+cpu
+            torchvision: 0.8.2+cpu
+            torch-source: https://download.pytorch.org/whl/cpu/torch_stable.html
+            train: True
+          - os: ubuntu-latest
+            python: 3.7
+            torch: 1.7.1+cpu
+            torchvision: 0.8.2+cpu
+            torch-source: https://download.pytorch.org/whl/torch_stable.html
+          - os: ubuntu-latest
+            python: 3.8
+            torch: 1.7.1+cpu
+            torchvision: 0.8.2+cpu
+            torch-source: https://download.pytorch.org/whl/cpu/torch_stable.html
+          - os: macos-latest
+            python: 3.7
+            torch: 1.7.1
+            torchvision: 0.8.2
+            torch-source: https://download.pytorch.org/whl/torch_stable.html
+          - os: windows-latest
+            python: 3.7
+            torch: 1.7.1+cpu
+            torchvision: 0.8.2+cpu
+            torch-source: https://download.pytorch.org/whl/torch_stable.html
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Python version
+      run: |
+        python --version
+    - name: Set up node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+    - name: Install Python
+      run: |
+        python -m pip install --upgrade pip setuptools
+        python -m pip install torch==${{ matrix.torch }} torchvision==${{ matrix.torchvision }} -f ${{ matrix.torch-source }}
+        python -m pip install -e ".[test]"
+    - name: Install for MacOSX
+      if: matrix.os == 'macos-latest'
+      run: brew install libomp  # required for onnxruntime
+    - run: npm install
+    - run: npm run build
+    - name: Print environment
+      run: |
+        python -m pip freeze
+        python --version
+        python -c "import openpifpaf; print(openpifpaf.__version__)"
+    - name: Prefetch model
+      run: |
+        mkdir -p ~/.cache/torch/checkpoints
+        cd ~/.cache/torch/checkpoints
+        wget -q -nc https://storage.googleapis.com/openpifpaf-pretrained/v0.8.0/shufflenetv2x1-pif-paf-edge401-190705-151607-d9a35d7e.pkl
+    - name: Lint Python
+      run: |
+        pylint openpifpafwebdemo --disable=fixme
+    - name: pycodestyle openpifpafwebdemo
+      run: |
+        python -m pycodestyle openpifpaf
+    - run: npm run lint
+    - run: npm run test
