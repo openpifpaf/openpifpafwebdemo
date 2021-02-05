@@ -28,6 +28,7 @@ setup(
     ],
     extras_require={
         'test': [
+            'pycodestyle',
             'pylint',
             'pytest',
         ],
