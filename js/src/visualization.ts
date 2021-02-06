@@ -45,7 +45,8 @@ export class Visualization {
         this.markerSize = 4;
     }
 
-    draw(image: string, data) {
+    draw(image: Blob, data) {
+        if (data === null) return;
         const scores = data.map((entry: any) => entry.score);
 
         // adjust height of output canvas
@@ -58,14 +59,15 @@ export class Visualization {
 
         // draw on output canvas
         const canvasImage = new Image();
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             canvasImage.onload = () => {
                 this.context.drawImage(canvasImage, 0, 0, this.canvas.width, this.canvas.height);
                 data.forEach((entry: any) => this.drawSkeleton(entry.coordinates, entry.detection_id));
                 resolve();
             };
             canvasImage.onerror = () => reject();
-            canvasImage.src = image;
+            // canvasImage.src = image;
+            canvasImage.src = URL.createObjectURL(image);
         });
     }
 
@@ -111,7 +113,7 @@ export class Visualization {
 
         // draw on output canvas
         const canvasImage = new Image();
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             canvasImage.onload = () => {
                 this.context.drawImage(canvasImage, 0, 0, this.canvas.width, this.canvas.height);
 

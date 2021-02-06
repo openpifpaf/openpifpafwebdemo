@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 import { expect } from 'chai';
-import * as request from 'request';
+import fetch from 'node-fetch';
 import * as fs from 'fs';
 
 
@@ -45,42 +45,33 @@ describe('Server Process', () => {
   });
 
   describe('web interface', () => {
-    it('has a working front end page', done => {
-      request.get('http://localhost:5002', (error, response, body) => {
-        expect(response.statusCode).to.equal(200);
-        done();
-      });
+    it('has a working front end page', async function() {
+      const response = await fetch('http://localhost:5002');
+      expect(response.status).to.equal(200);
     });
 
-    it('serves frontend.js', done => {
-      request.get('http://localhost:5002/static/frontend.js', (error, response, body) => {
-        expect(response.statusCode).to.equal(200);
-        done();
-      });
+    it('serves frontend.js', async function() {
+      const response = await fetch('http://localhost:5002/static/frontend.js');
+      expect(response.status).to.equal(200);
     });
-    it('serves clientside.js', done => {
-        request.get('http://localhost:5002/static/clientside.js', (error, response, body) => {
-        expect(response.statusCode).to.equal(200);
-        done();
-      });
+    it('serves clientside.js', async function() {
+      const response = await fetch('http://localhost:5002/static/clientside.js');
+      expect(response.status).to.equal(200);
     });
 
-    it('can respond to post requests with images', done => {
-      const testImage = fs.readFileSync('test_image.json').toString();
-      request.post({
-        url: 'http://localhost:5002/process',
-        formData: JSON.parse(testImage),
-      }, (error, response, body) => {
-        expect(response.statusCode).to.equal(200);
-
-        const data = JSON.parse(body);
-        const scores = data.map((entry: any) => entry.score);
-        console.log({scores});
-
-        expect(scores.length).to.equal(1);
-        expect(scores[0]).greaterThan(0.2);
-        done();
+    it('can respond to post requests with images', async function() {
+      const image = fs.readFileSync('docs/me_nyc_square_500.jpeg');
+      const response = await fetch('http://localhost:5002/v1/human-poses', {
+          method: 'post',
+          body: image,
       });
+      expect(response.status).to.equal(200);
+
+      const data = await response.json();
+      const scores = data.map((entry: any) => entry.score);
+
+      expect(scores.length).to.equal(1);
+      expect(scores[0]).greaterThan(0.2);
     });
   });
 });

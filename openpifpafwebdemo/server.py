@@ -1,7 +1,6 @@
 """OpenPifPaf web demo server process."""
 
 import argparse
-import json
 import logging
 import os
 import random
@@ -14,85 +13,12 @@ import torch
 import tornado
 import tornado.autoreload
 import tornado.httpclient
-from tornado.web import RequestHandler
 
 import openpifpaf
 
 from .processor import Processor
-from . import __version__ as VERSION
-
-
-# pylint: disable=abstract-method
-class PostHandler(RequestHandler):
-    def initialize(self, processor, *, demo_password):
-        self.processor = processor  # pylint: disable=attribute-defined-outside-init
-        self.demo_password = demo_password  # pylint: disable=attribute-defined-outside-init
-
-    def set_default_headers(self):
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers',
-                        'Content-Type, Access-Control-Allow-Headers')
-
-    def post(self):  # pylint: disable=arguments-differ
-        self.set_default_headers()
-
-        image = self.get_argument('image', None)
-        if image is None:
-            image = json.loads(self.request.body).get('image', None)
-        if image is None:
-            self.write('no image provided')
-            return
-
-        resize = True
-        if self.demo_password:
-            if self.get_argument('pw', None) != self.demo_password:
-                self.write(json.dumps({'error': 'demo in progress'}))
-                return
-            resize = False
-        keypoint_sets, scores, width_height = self.processor.single_image(image, resize=resize)
-        keypoint_sets = [{
-            'coordinates': keypoints.tolist(),
-            'detection_id': i,
-            'score': score,
-            'width_height': width_height,
-        } for i, (keypoints, score) in enumerate(zip(keypoint_sets, scores))]
-        self.write(json.dumps(keypoint_sets))
-
-    def options(self):
-        self.set_default_headers()
-        self.set_status(204)
-        self.finish()
-
-
-class RenderTemplate(tornado.web.RequestHandler):
-    def initialize(self, template_name, **info):
-        self.template_name = template_name  # pylint: disable=attribute-defined-outside-init
-        self.info = info  # pylint: disable=attribute-defined-outside-init
-
-    def get(self):
-        self.render(self.template_name, **self.info)
-
-    def head(self):
-        pass
-
-
-class Index(tornado.web.RequestHandler):
-    def initialize(self, template_name, demo_password, **info):
-        self.template_name = template_name  # pylint: disable=attribute-defined-outside-init
-        self.demo_password = demo_password  # pylint: disable=attribute-defined-outside-init
-        self.info = info  # pylint: disable=attribute-defined-outside-init
-
-    def get(self):
-        password = self.get_argument('pw', default=None)
-        if self.demo_password and password == self.demo_password:
-            self.info['width_height'] = (801, 601)
-        elif self.demo_password:
-            self.write('Demo currently in progress. Check back later.')
-            return
-        self.render(self.template_name, **self.info)
-
-    def head(self):
-        pass
+from . import __version__
+from . import handlers
 
 
 async def grep_static(dest, url='http://127.0.0.1:5000'):
@@ -156,7 +82,7 @@ def cli():
 
     # config
     logging.debug('host=%s, port=%d', args.host, args.port)
-    logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, VERSION)
+    logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, __version__)
     if args.host in ('localhost', '127.0.0.1'):
         logging.info('Open http://%s:%d in a web browser.', args.host, args.port)
 
@@ -166,6 +92,12 @@ def cli():
         args.device = torch.device('cuda')
 
     return args
+
+
+class Application(tornado.web.Application):
+    def __init__(self, handler_list, *, processor, **settings):
+        self.processor = processor
+        super().__init__(handler_list, **settings)
 
 
 def main():
@@ -188,15 +120,15 @@ def main():
 
     if args.debug:
         version = '{}-{}'.format(
-            VERSION,
+            __version__,
             ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
         )
     else:
-        version = VERSION
+        version = __version__
 
-    app = tornado.web.Application(
+    app = Application(
         [
-            (r'/', Index, {
+            (r'/', handlers.Index, {
                 'template_name': 'index.html',
                 'demo_password': args.demo_password,
 
@@ -207,7 +139,7 @@ def main():
                 'google_analytics': args.google_analytics,
                 'width_height': width_height,
             }),
-            (r'/client.html', RenderTemplate, {
+            (r'/client.html', handlers.RenderTemplate, {
                 'template_name': 'client.html',
                 'title': 'OpenPifPafWebDemo Serverless',
                 'description': 'Interactive web browser based demo of OpenPifPaf.',
@@ -224,13 +156,13 @@ def main():
             (r'/(favicon\.ico)', tornado.web.StaticFileHandler, {
                 'path': os.path.join(static_path, 'favicon.ico'),
             }),
-            (r'/process', PostHandler, {
-                'processor': processor_singleton,
-                'demo_password': args.demo_password,
-            }),
+            (r'/v1/feed', handlers.Feed),
+            (r"/v1/human-poses", handlers.HumanPoses),
         ],
         debug=args.debug,
+        processor=processor_singleton,
         static_path=static_path,
+        template_path=os.path.dirname(__file__),
     )
     app.listen(args.port, args.host)
 
