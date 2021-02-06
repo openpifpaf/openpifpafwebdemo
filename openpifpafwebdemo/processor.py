@@ -19,10 +19,8 @@ class Processor(object):
         self.processor = openpifpaf.decoder.factory_from_args(args, self.model)
         self.device = args.device
 
-    def single_image(self, b64image, *, resize=True):
-        imgstr = re.search(r'base64,(.*)', b64image).group(1)
-        image_bytes = io.BytesIO(base64.b64decode(imgstr))
-        im = PIL.Image.open(image_bytes).convert('RGB')
+    def single_image(self, image_bytes, *, resize=True):
+        im = PIL.Image.open(io.BytesIO(image_bytes)).convert('RGB')
 
         if resize:
             target_wh = self.width_height
