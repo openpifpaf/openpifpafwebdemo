@@ -63,7 +63,7 @@ export class Camera {
         this.video.srcObject = stream;
     }
 
-    imageData() {
+    async imageData() {
         // update capture canvas size
         const landscape = this.video.clientWidth > this.video.clientHeight;
         const targetSize = landscape ? this.originalCaptureCanvasSize : this.originalCaptureCanvasSize.slice().reverse();
@@ -83,7 +83,13 @@ export class Camera {
             this.video, 0, 0, this.captureCanvas.width, this.captureCanvas.height);
         this.captureContext.restore();
 
-        return {image_id: this.captureCounter, image: this.captureCanvas.toDataURL()};
+        let image = null
+        await new Promise<void>(resolve => this.captureCanvas.toBlob(blob => {
+            image = blob;
+            resolve();
+        }));
+
+        return {image_id: this.captureCounter, image: image}
     }
 
     nextCamera() {

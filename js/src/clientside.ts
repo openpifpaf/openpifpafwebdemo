@@ -86,12 +86,12 @@ inputElements[0].onchange(null);
 export async function newImageOnnx() {
     if (!modelLoaded) {
         console.log('model not loaded yet');
-        await new Promise(resolve => setTimeout(() => resolve(), 200));
+        await new Promise<void>(resolve => setTimeout(() => resolve(), 200));
         return;
     }
 
     // generate model input
-    const data = c.imageData();
+    const data = await c.imageData();
     const inferenceInputs = preProcess(c.captureContext);
     const [n_batch, n_colors, height, width] = inferenceInputs.dims;
     if (height > width) {
@@ -128,7 +128,7 @@ export async function newImageOnnx() {
 async function loop_forever() {
     while (true) {
         await newImageOnnx();
-        await new Promise(resolve => requestAnimationFrame(() => resolve()));
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
     }
 }
 loop_forever();

@@ -19,13 +19,12 @@ const c = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
 
 export async function newImage() {
-    const data = c.imageData();
+    const data = await c.imageData();
 
-    const response = await fetch(backend_location + '/process' + document.location.search, {
+    const response = await fetch(backend_location + '/v1/human-poses', {
         method: 'post',
         mode: 'cors',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data),
+        body: data.image,
     });
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;
@@ -34,13 +33,8 @@ export async function newImage() {
     }
     lastProcessing = Date.now();
 
-    const predPromise = response.json();
-
-    // return a promise that contains the image and the resolved prediction
-    return new Promise(resolve => predPromise.then(pred => {
-        console.log(pred);
-        resolve([data.image, pred]);
-    }));
+    const pred = await response.json();
+    return [data.image, pred];
 }
 
 
@@ -50,7 +44,7 @@ async function loop_forever() {
         let [image_pred, _, __] = await Promise.all([
             newImage(),
             vis.draw(prev_image_pred[0], prev_image_pred[1]),
-            new Promise(resolve => requestAnimationFrame(() => resolve())),
+            new Promise<void>(resolve => requestAnimationFrame(() => resolve())),
         ]);
         prev_image_pred = image_pred;
     }
