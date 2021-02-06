@@ -15,13 +15,13 @@ const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
 let fps = 0.0;
 let lastProcessing: number = null;
 
-const c = new Camera(document.getElementById('capture'));
+const camera = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
 
 export async function newImage() {
-    const data = await c.imageData();
+    const data = await camera.imageData();
 
-    const response = await fetch(backend_location + '/v1/human-poses', {
+    const response = await fetch(backend_location + '/v1/human-poses' + document.location.search, {
         method: 'post',
         mode: 'cors',
         body: data.image,
