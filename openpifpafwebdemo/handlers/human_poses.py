@@ -25,7 +25,8 @@ class HumanPoses(tornado.web.RequestHandler):
                 await self.finish(json.dumps({'error': 'demo in progress'}))
                 return
             resize = False
-        keypoint_sets, scores, width_height = self.application.processor.single_image(image, resize=resize)
+        keypoint_sets, scores, width_height = \
+            self.application.processor.single_image(image, resize=resize)
         keypoint_sets = [{
             'coordinates': keypoints.tolist(),
             'detection_id': i,

@@ -1,7 +1,5 @@
-import base64
 import io
 import time
-import re
 
 import PIL
 import torch

@@ -97,7 +97,7 @@ def cli():
 class Application(tornado.web.Application):
     def __init__(self, handler_list, *, processor, **settings):
         self.processor = processor
-        super(Application, self).__init__(handler_list, **settings)
+        super().__init__(handler_list, **settings)
 
 
 def main():
