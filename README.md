@@ -34,7 +34,7 @@ __Example:__
 Example using cURL:
 
 ```sh
-curl -X POST -H "Content-Type: application/json" --data @test_image.json http://localhost:5000/process
+curl --data-binary @docs/me_nyc_square_500.jpeg http://localhost:5000/v1/human-poses
 ```
 
 which produces:
@@ -46,7 +46,7 @@ which produces:
 Keep-alive connection test:
 
 ```sh
-curl -v -X POST -H "Content-Type: application/json" --data @test_image.json http://localhost:5000/process --next -X POST -H "Content-Type: application/json" --data @test_image.json http://localhost:5000/process 2>&1 | grep '#0'
+curl -v --data-binary @docs/me_nyc_square_500.jpeg http://localhost:5000/v1/human-poses --next --data-binary @docs/me_nyc_square_500.jpeg http://localhost:5000/v1/human-poses 2>&1 | grep '#0'
 * Connected to localhost (127.0.0.1) port 5000 (#0)
 * Connection #0 to host localhost left intact
 * Re-using existing connection! (#0) with host localhost
