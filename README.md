@@ -1,6 +1,6 @@
 # openpifpafwebdemo
 
-[![Build Status](https://travis-ci.org/vita-epfl/openpifpafwebdemo.svg?branch=master)](https://travis-ci.org/vita-epfl/openpifpafwebdemo)
+![Tests](https://github.com/vita-epfl/openpifpafwebdemo/workflows/Tests/badge.svg)
 
 Links:
 [main repository](https://github.com/vita-epfl/openpifpaf) and
