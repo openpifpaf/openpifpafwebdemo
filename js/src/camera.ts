@@ -83,13 +83,13 @@ export class Camera {
             this.video, 0, 0, this.captureCanvas.width, this.captureCanvas.height);
         this.captureContext.restore();
 
-        let image = null
+        let image = null;
         await new Promise<void>(resolve => this.captureCanvas.toBlob(blob => {
             image = blob;
             resolve();
         }));
 
-        return {image_id: this.captureCounter, image: image}
+        return {image_id: this.captureCounter, image: image};
     }
 
     nextCamera() {
