@@ -56,14 +56,19 @@ jobs:
           name: artifact
           path: dist
       - run: cp dist/openpifpafwebdemo-*.tar.gz dist/openpifpafwebdemo-latest.tar.gz
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
         with:
-          file: docker/Dockerfile
+          images: svenkreiss/openpifpafwebdemo
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          file: ./docker/Dockerfile
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: svenkreiss/openpifpafwebdemo
-          tag_with_ref: true
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
 
   upload_pypi:
     needs: [build_sdist]
