@@ -86,6 +86,8 @@ def cli():
     logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, __version__)
     if args.host in ('localhost', '127.0.0.1'):
         logging.info('Open http://%s:%d in a web browser.', args.host, args.port)
+    if args.host != '0.0.0.0':
+        logging.info('Access is restricted by IP address. Use --host=0.0.0.0 to allow all.')
 
     # add args.device
     args.device = torch.device('cpu')

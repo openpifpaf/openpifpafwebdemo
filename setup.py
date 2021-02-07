@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 # extract version from __init__.py
@@ -10,9 +10,7 @@ with open('openpifpafwebdemo/__init__.py', 'r') as f:
 setup(
     name='openpifpafwebdemo',
     version=VERSION,
-    packages=[
-        'openpifpafwebdemo',
-    ],
+    packages=find_packages(),
     license='MIT',
     description='Web-browser demo for openpifpaf.',
     long_description=open('README.md').read(),
