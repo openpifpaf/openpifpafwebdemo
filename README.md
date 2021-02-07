@@ -26,7 +26,7 @@ _Troubleshooting_: Make sure you are using Python3 and have the latest pip and s
 
 __Example:__
 
-<img src="docs/wave3.gif" height=250 alt="example image" />
+<img src="https://github.com/vita-epfl/openpifpafwebdemo/blob/main/docs/wave3.gif" height=250 alt="example image" />
 
 
 # API
