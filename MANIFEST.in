@@ -1,2 +1,4 @@
 recursive-include openpifpafwebdemo *.html
 recursive-include openpifpafwebdemo/static *.js *.js.map *.html *.ico *.svg *.css
+include versioneer.py
+include openpifpafwebdemo/_version.py
