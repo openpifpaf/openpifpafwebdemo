@@ -31,10 +31,12 @@ jobs:
       - run: npm install
       - run: npm run build
 
-      - uses: actions/setup-python@v2
-        name: Install Python
+      - name: Install Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.7'
+
+      - run: git status
 
       - name: Build sdist
         run: python setup.py sdist
