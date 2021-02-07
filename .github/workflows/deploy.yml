@@ -1,4 +1,4 @@
-name: Build and upload to PyPI
+name: Build and upload
 
 # Build on every branch push, tag push, and pull request change:
 # on: [push, pull_request]
@@ -42,6 +42,28 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: dist/*.tar.gz
+
+  create_docker:
+    needs: [build_sdist]
+    name: Build and publish docker image
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: dist
+      - run: cp dist/openpifpafwebdemo-*.tar.gz dist/openpifpafwebdemo-latest.tar.gz
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          file: docker/Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: svenkreiss/openpifpafwebdemo
+          tag_with_ref: true
 
   upload_pypi:
     needs: [build_sdist]
