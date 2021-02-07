@@ -64,7 +64,7 @@ jobs:
     - name: Install for MacOSX
       if: matrix.os == 'macos-latest'
       run: brew install libomp  # required for onnxruntime
-    - run: npm install
+    - run: npm ci  # install from package-lock.json without modifying it
     - run: npm run build
     - name: Print environment
       run: |
