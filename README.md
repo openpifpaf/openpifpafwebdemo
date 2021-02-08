@@ -19,14 +19,29 @@ pip3 install openpifpafwebdemo
 python3 -m openpifpafwebdemo.server
 ```
 
-Open a web browser at `http://localhost:5000` to view the web interface.
-
-_Troubleshooting_: Make sure you are using Python3 and have the latest pip and setuptools with `pip install --upgrade pip setuptools`. Do not clone this repository. Make sure there is no folder named `openpifpafwebdemo` in your current directory.
+_Troubleshooting_: Make sure you are using Python3 and have the latest pip and
+setuptools with `pip install --upgrade pip setuptools`. Do not clone this
+repository. Make sure there is no folder named `openpifpafwebdemo` in your
+current directory.
 
 
 __Example:__
 
 <img src="https://github.com/vita-epfl/openpifpafwebdemo/blob/main/docs/wave3.gif" height=250 alt="example image" />
+
+
+# Docker
+
+For every release, this repository builds a new docker image and uploads it
+to [Docker Hub: svenkreiss/openpifpafwebdemo](https://hub.docker.com/r/svenkreiss/openpifpafwebdemo).
+You can test it with:
+
+```
+docker run -d -p 5000:80 svenkreiss/openpifpafwebdemo
+```
+
+This docker images also powers https://vitademo.epfl.ch. More info on building
+the docker image and how to deploy it to Kubernetes is in [docker/readme.md](docker/readme.md).
 
 
 # API
