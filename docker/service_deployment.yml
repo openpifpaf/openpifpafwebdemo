@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpifpafwebdemo
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: openpifpafwebdemo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openpifpafwebdemo
+spec:
+  selector:
+    matchLabels:
+      app: openpifpafwebdemo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpifpafwebdemo
+    spec:
+      containers:
+      - name: openpifpafwebdemo
+        image: svenkreiss/openpifpafwebdemo
+        command: [ "python3", "-m", "openpifpafwebdemo.server" ]
+        args:
+        - "--host=0.0.0.0"
+        - "--port=80"
+        - "--google-analytics=UA-137290484-1"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            nvidia.com/gpu: 1

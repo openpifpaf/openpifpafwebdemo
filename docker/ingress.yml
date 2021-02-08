@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: http-ingress
+spec:
+  tls:
+  - hosts:
+      - vitademo.epfl.ch
+    secretName: secret-tls
+  rules:
+  - host: vitademo.epfl.ch
+    http:
+      paths:
+      - path: /echo
+        pathType: Prefix
+        backend:
+          service:
+            name: echo
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: openpifpafwebdemo
+            port:
+              number: 80
