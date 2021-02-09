@@ -68,7 +68,7 @@ describe('Server Process', () => {
       expect(response.status).to.equal(200);
 
       const data = await response.json();
-      const scores = data.map((entry: any) => entry.score);
+      const scores = data.annotations.map((entry: any) => entry.score);
 
       expect(scores.length).to.equal(1);
       expect(scores[0]).greaterThan(0.2);
