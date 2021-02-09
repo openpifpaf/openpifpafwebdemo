@@ -3,6 +3,8 @@ import logging
 
 import tornado.web
 
+from . import key
+
 LOG = logging.getLogger(__name__)
 
 
@@ -25,15 +27,17 @@ class HumanPoses(tornado.web.RequestHandler):
                 await self.finish(json.dumps({'error': 'demo in progress'}))
                 return
             resize = False
-        keypoint_sets, scores, width_height = \
-            self.application.processor.single_image(image, resize=resize)
-        keypoint_sets = [{
-            'coordinates': keypoints.tolist(),
-            'detection_id': i,
-            'score': score,
-            'width_height': width_height,
-        } for i, (keypoints, score) in enumerate(zip(keypoint_sets, scores))]
-        await self.finish(json.dumps(keypoint_sets))
+
+        channel_id = self.get_argument('channel', str(key.generate(6)))
+        if not key.validate(channel_id):
+            return
+
+        annotations = self.application.processor.single_image(image, resize=resize)
+        await self.finish(json.dumps({'channel': channel_id, 'annotations': annotations}))
+
+        channel_name = 'channel:{}'.format(channel_id)
+        LOG.info('publishing to %s', channel_name)
+        self.application.signal.emit(channel_name, annotations)
 
     def options(self):
         self.set_default_headers()

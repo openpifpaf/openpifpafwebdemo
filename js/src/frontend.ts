@@ -17,11 +17,13 @@ let lastProcessing: number = null;
 
 const camera = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
+const feed_link = <HTMLAnchorElement>document.getElementById('feedlink');
+const url = new URL(document.location.href);
 
 export async function newImage() {
     const data = await camera.imageData();
 
-    const response = await fetch(backend_location + '/v1/human-poses' + document.location.search, {
+    const response = await fetch(backend_location + '/v1/human-poses' + url.search, {
         method: 'post',
         mode: 'cors',
         body: data.image,
@@ -34,6 +36,14 @@ export async function newImage() {
     lastProcessing = Date.now();
 
     const pred = await response.json();
+
+    if (url.searchParams.get('channel') != pred.channel) {
+        url.searchParams.set('channel', pred.channel);
+        // document.location.replace(url.toString());
+        feed_link.href = '/v1/feed?channel=' + pred.channel;
+        feed_link.text = pred.channel;
+    }
+
     return [data.image, pred];
 }
 
