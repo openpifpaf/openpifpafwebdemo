@@ -153,6 +153,14 @@ footer ul {
 }
 
 
+.feedlink {
+    color: #888;
+    font-size: 80%;
+}
+.feedlink a {
+    color: #888;
+}
+
 
 
 .d-boxes {
