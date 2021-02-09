@@ -19,6 +19,7 @@ import openpifpaf
 from .processor import Processor
 from . import __version__
 from . import handlers
+from .signal import Signal
 
 
 async def grep_static(dest, url='http://127.0.0.1:5000'):
@@ -98,8 +99,9 @@ def cli():
 
 
 class Application(tornado.web.Application):
-    def __init__(self, handler_list, *, processor, **settings):
+    def __init__(self, handler_list, *, processor, signal, **settings):
         self.processor = processor
+        self.signal = signal
         super().__init__(handler_list, **settings)
 
 
@@ -160,10 +162,11 @@ def main():
                 'path': os.path.join(static_path, 'favicon.ico'),
             }),
             (r'/v1/feed', handlers.Feed),
-            (r"/v1/human-poses", handlers.HumanPoses),
+            (r'/v1/human-poses', handlers.HumanPoses),
         ],
         debug=args.debug,
         processor=processor_singleton,
+        signal=Signal(),  # can also by Redis PubSub
         static_path=static_path,
         template_path=os.path.dirname(__file__),
     )

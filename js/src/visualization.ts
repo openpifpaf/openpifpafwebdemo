@@ -47,11 +47,12 @@ export class Visualization {
 
     draw(image: Blob, data) {
         if (data === null) return;
-        const scores = data.map((entry: any) => entry.score);
+        const annotations = data.annotations;
 
         // adjust height of output canvas
         if (data && data.length > 0) {
-            const landscape = data[0].width_height[0] > data[0].width_height[1];
+            const width_height = data.annotations[0].width_height;
+            const landscape = width_height[0] > width_height[1];
             const targetSize = landscape ? this.originalCanvasSize : this.originalCanvasSize.slice().reverse();
             if (this.canvas.width !== targetSize[0]) this.canvas.width = targetSize[0];
             if (this.canvas.height !== targetSize[1]) this.canvas.height = targetSize[1];
@@ -62,7 +63,7 @@ export class Visualization {
         return new Promise<void>((resolve, reject) => {
             canvasImage.onload = () => {
                 this.context.drawImage(canvasImage, 0, 0, this.canvas.width, this.canvas.height);
-                data.forEach((entry: any) => this.drawSkeleton(entry.coordinates, entry.detection_id));
+                annotations.forEach((annotation: any) => this.drawSkeleton(annotation));
                 resolve();
             };
             canvasImage.onerror = () => reject();
@@ -88,10 +89,10 @@ export class Visualization {
         });
     }
 
-    drawSkeleton(keypoints, detection_id) {
-        this.drawSkeletonLines(keypoints);
+    drawSkeleton(annotation) {
+        this.drawSkeletonLines(annotation.keypoints);
 
-        keypoints.forEach((xyv, joint_id) => {
+        annotation.keypoints.forEach((xyv, joint_id) => {
             if (xyv[2] === 0.0) return;
 
             this.context.beginPath();

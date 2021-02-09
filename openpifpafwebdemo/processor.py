@@ -41,12 +41,15 @@ class Processor(object):
         image_tensors_batch = torch.unsqueeze(processed_image.float(), 0)
         pred_anns = self.processor.batch(self.model, image_tensors_batch, device=self.device)[0]
 
-        keypoint_sets = [ann.data for ann in pred_anns]
-        scores = [ann.score() for ann in pred_anns]
-
-        # normalize scale
-        for kps in keypoint_sets:
-            kps[:, 0] /= (processed_image.shape[2] - 1)
-            kps[:, 1] /= (processed_image.shape[1] - 1)
-
-        return keypoint_sets, scores, width_height
+        json_data = [(ann
+                      .rescale((1.0 / width_height[0], 1.0 / width_height[1]))
+                      .json_data(coordinate_digits=5))
+                     for ann in pred_anns]
+        for d in json_data:
+            d['keypoints'] = list(zip(
+                d['keypoints'][0::3],
+                d['keypoints'][1::3],
+                d['keypoints'][2::3],
+            ))
+            d['width_height'] = width_height
+        return json_data
