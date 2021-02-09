@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "test": "tsc && mocha -t 10000 js/build/commonjs/test.js",
+    "test": "tsc && mocha -t 30000 js/build/commonjs/test.js",
     "lint": "tslint -c tslint.json js/src/*.ts"
   },
   "repository": {
