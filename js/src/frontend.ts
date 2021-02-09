@@ -28,7 +28,7 @@ export async function newImage() {
         mode: 'cors',
         body: data.image,
     });
-    if (lastProcessing != null) {
+    if (lastProcessing !== null) {
         const duration = Date.now() - lastProcessing;
         fps = 0.5 * fps + 0.5 * (1000.0 / duration);
         fpsSpan.textContent = `${fps.toFixed(1)}`;
