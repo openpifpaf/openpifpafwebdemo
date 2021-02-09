@@ -37,7 +37,7 @@ export async function newImage() {
 
     const pred = await response.json();
 
-    if (url.searchParams.get('channel') != pred.channel) {
+    if (url.searchParams.get('channel') !== pred.channel) {
         url.searchParams.set('channel', pred.channel);
         // document.location.replace(url.toString());
         feed_link.href = '/v1/feed?channel=' + pred.channel;
