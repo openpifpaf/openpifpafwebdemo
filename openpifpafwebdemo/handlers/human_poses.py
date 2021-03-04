@@ -32,12 +32,13 @@ class HumanPoses(tornado.web.RequestHandler):
         if not key.validate(channel_id):
             return
 
-        annotations = self.application.processor.single_image(image, resize=resize)
-        await self.finish(json.dumps({'channel': channel_id, 'annotations': annotations}))
+        out_data = self.application.processor.single_image(image, resize=resize)
+        out_data['channel'] = channel_id
+        await self.finish(json.dumps(out_data))
 
         channel_name = 'channel:{}'.format(channel_id)
         LOG.info('publishing to %s', channel_name)
-        self.application.signal.emit(channel_name, annotations)
+        self.application.signal.emit(channel_name, out_data)
 
     def options(self):
         self.set_default_headers()

@@ -83,6 +83,14 @@ the browser cache for static assets and autoreload when source files change.
 # Citation
 
 ```
+@article{kreiss2021openpifpaf,
+  title = {{OpenPifPaf: Composite Fields for Semantic Keypoint Detection and Spatio-Temporal Association}},
+  author = {Sven Kreiss and Lorenzo Bertoni and Alexandre Alahi},
+  journal = {arXiv preprint arXiv:2103.02440},
+  month = {March},
+  year = {2021}
+}
+
 @InProceedings{kreiss2019pifpaf,
   author = {Kreiss, Sven and Bertoni, Lorenzo and Alahi, Alexandre},
   title = {PifPaf: Composite Fields for Human Pose Estimation},

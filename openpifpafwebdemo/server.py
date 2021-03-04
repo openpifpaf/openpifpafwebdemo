@@ -21,6 +21,8 @@ from . import __version__
 from . import handlers
 from .signal import Signal
 
+LOG = logging.getLogger(__name__)
+
 
 async def grep_static(dest, url='http://127.0.0.1:5000'):
     http_client = tornado.httpclient.AsyncHTTPClient()
@@ -40,7 +42,8 @@ def cli():
     )
 
     openpifpaf.decoder.cli(parser)
-    openpifpaf.network.cli(parser)
+    openpifpaf.logger.cli(parser)
+    openpifpaf.network.Factory.cli(parser)
 
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
@@ -51,8 +54,6 @@ def cli():
                         help='directory in which to create a static version of this page')
     parser.add_argument('--demo-password', default=None,
                         help='password that allows better performance for a demo')
-    parser.add_argument('--debug', default=False, action='store_true',
-                        help='debug messages and autoreload')
     parser.add_argument('--google-analytics',
                         help='provide a google analytics id to inject analytics code')
 
@@ -76,19 +77,17 @@ def cli():
 
     args = parser.parse_args()
 
-    # log
-    logging.basicConfig(level=logging.INFO if not args.debug else logging.DEBUG)
-
     # configure
-    openpifpaf.network.configure(args)
+    openpifpaf.logger.configure(args, LOG)
+    openpifpaf.network.Factory.configure(args)
 
     # config
-    logging.debug('host=%s, port=%d', args.host, args.port)
-    logging.debug('Python %s, OpenPifPafWebDemo %s', sys.version, __version__)
+    LOG.debug('host=%s, port=%d', args.host, args.port)
+    LOG.debug('Python %s, OpenPifPafWebDemo %s', sys.version, __version__)
     if args.host in ('localhost', '127.0.0.1'):
-        logging.info('Open http://%s:%d in a web browser.', args.host, args.port)
+        LOG.info('Open http://%s:%d in a web browser.', args.host, args.port)
     if args.host != '0.0.0.0':
-        logging.info('Access is restricted by IP address. Use --host=0.0.0.0 to allow all.')
+        LOG.info('Access is restricted by IP address. Use --host=0.0.0.0 to allow all.')
 
     # add args.device
     args.device = torch.device('cpu')
@@ -109,7 +108,7 @@ def main():
     args = cli()
     width_height = (int(640 * args.resolution // 16) * 16 + 1,
                     int(480 * args.resolution // 16) * 16 + 1)
-    logging.debug('target width and height = %s', width_height)
+    LOG.debug('target width and height = %s', width_height)
     processor_singleton = Processor(width_height, args)
 
     static_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static')
@@ -123,7 +122,7 @@ def main():
     tornado.autoreload.watch('openpifpafwebdemo/static/frontend.js')
     tornado.autoreload.watch('openpifpafwebdemo/static/clientside.js')
 
-    if args.debug:
+    if LOG.getEffectiveLevel() == logging.DEBUG:
         version = '{}-{}'.format(
             __version__,
             ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
@@ -185,7 +184,7 @@ def main():
                 'keyfile': os.path.join(module_dir, 'test', 'test.key'),
             }
 
-        logging.info('Open https://%s:%d in a web browser.', args.host, args.ssl_port)
+        LOG.info('Open https://%s:%d in a web browser.', args.host, args.ssl_port)
         app.listen(args.ssl_port, ssl_options=ssl_ctx)
 
     try:

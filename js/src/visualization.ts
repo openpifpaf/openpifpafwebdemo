@@ -47,6 +47,7 @@ export class Visualization {
 
     draw(image: Blob, data) {
         if (data === null) return;
+        console.log(data);
         const annotations = data.annotations;
 
         // adjust height of output canvas
