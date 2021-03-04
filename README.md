@@ -3,7 +3,8 @@
 ![Tests](https://github.com/vita-epfl/openpifpafwebdemo/workflows/Tests/badge.svg)
 
 Links:
-[main repository](https://github.com/vita-epfl/openpifpaf) and
+[main repository](https://github.com/vita-epfl/openpifpaf),
+[2021 paper](https://arxiv.org/abs/2103.02440) and
 [CVPR2019 paper](http://openaccess.thecvf.com/content_CVPR_2019/html/Kreiss_PifPaf_Composite_Fields_for_Human_Pose_Estimation_CVPR_2019_paper.html).<br />
 Live demo: https://vitademo.epfl.ch<br />
 Serverless live demo: https://vita-epfl.github.io/openpifpafwebdemo/
