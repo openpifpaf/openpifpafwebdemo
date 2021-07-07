@@ -52,8 +52,8 @@ export class Visualization {
 
         // adjust height of output canvas
         if (data && data.length > 0) {
-            const width_height = data.annotations[0].width_height;
-            const landscape = width_height[0] > width_height[1];
+            const widthHeight = data.annotations[0].widthHeight;
+            const landscape = widthHeight[0] > widthHeight[1];
             const targetSize = landscape ? this.originalCanvasSize : this.originalCanvasSize.slice().reverse();
             if (this.canvas.width !== targetSize[0]) this.canvas.width = targetSize[0];
             if (this.canvas.height !== targetSize[1]) this.canvas.height = targetSize[1];
@@ -74,11 +74,11 @@ export class Visualization {
     }
 
     drawSkeletonLines(keypoints) {
-        COCO_PERSON_SKELETON.forEach((joint_pair, connection_index) => {
-            const [joint1i, joint2i] = joint_pair;
+        COCO_PERSON_SKELETON.forEach((jointPair, connectionIndex) => {
+            const [joint1i, joint2i] = jointPair;
             const joint1xyv = keypoints[joint1i - 1];
             const joint2xyv = keypoints[joint2i - 1];
-            const color = COLORS[connection_index % COLORS.length];
+            const color = COLORS[connectionIndex % COLORS.length];
             this.context.strokeStyle = color;
             this.context.lineWidth = this.lineWidth;
             if (joint1xyv[2] === 0.0 || joint2xyv[2] === 0.0) return;
@@ -93,7 +93,7 @@ export class Visualization {
     drawSkeleton(annotation) {
         this.drawSkeletonLines(annotation.keypoints);
 
-        annotation.keypoints.forEach((xyv, joint_id) => {
+        annotation.keypoints.forEach((xyv, jointId) => {
             if (xyv[2] === 0.0) return;
 
             this.context.beginPath();

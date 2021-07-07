@@ -5,12 +5,12 @@ import * as fs from 'fs';
 
 
 describe('Server Process', () => {
-  let server_process_return_code = -42;
+  let serverProcessReturnCode = -42;
 
   // spawn the server process
   let envVars = process.env;
   envVars.PORT = '5002';
-  const server_process = child_process.spawn('python', [
+  const serverProcess = child_process.spawn('python', [
     '-m', 'openpifpafwebdemo.server',
     '--no-download-progress',
   ], {
@@ -18,28 +18,28 @@ describe('Server Process', () => {
   });
 
   // configure process
-  expect(server_process).to.not.equal(null);
-  expect(server_process.stdout).to.not.equal(null);
-  if (server_process.stdout == null) return;
-  if (server_process.stderr == null) return;
-  server_process.stdout.on('data', data => console.log('server stdout: ' + data));
-  server_process.stderr.on('data', data => console.log('server stderr: ' + data));
-  server_process.on('exit', code => {
+  expect(serverProcess).to.not.equal(null);
+  expect(serverProcess.stdout).to.not.equal(null);
+  if (serverProcess.stdout == null) return;
+  if (serverProcess.stderr == null) return;
+  serverProcess.stdout.on('data', data => console.log('server stdout: ' + data));
+  serverProcess.stderr.on('data', data => console.log('server stderr: ' + data));
+  serverProcess.on('exit', code => {
     if (code == null) code = -100;
-    server_process_return_code = code;
+    serverProcessReturnCode = code;
     console.log('server process exited with code ' + code);
   });
 
   before(done => {
     setTimeout(() => {
-      expect(server_process_return_code).to.equal(-42);
+      expect(serverProcessReturnCode).to.equal(-42);
       done();
     }, 5000);
   });
 
   after(done => {
     setTimeout(() => {
-      server_process.kill('SIGINT');
+      serverProcess.kill('SIGINT');
       done();
     }, 2000);
   });

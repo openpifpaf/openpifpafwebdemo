@@ -7,14 +7,6 @@ import * as ndarray from 'ndarray';
 import * as ops from 'ndarray-ops';
 
 
-let backend_location = '';
-if (document.location.search && document.location.search[0] === '?') {
-    backend_location = document.location.search.substr(1);
-}
-if (!backend_location && document.location.hostname === 'vita-epfl.github.io') {
-    backend_location = 'https://vitademo.epfl.ch';
-}
-
 const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
 let captureCounter = 0;
 let fps = 0.0;
@@ -93,7 +85,7 @@ export async function newImageOnnx() {
     // generate model input
     const data = await c.imageData();
     const inferenceInputs = preProcess(c.captureContext);
-    const [n_batch, n_colors, height, width] = inferenceInputs.dims;
+    const [nBatch, nColors, height, width] = inferenceInputs.dims;
     if (height > width) {
         alert('use landscape mode');
         return;
@@ -105,8 +97,7 @@ export async function newImageOnnx() {
     let output = null;
     try {
         output = await session.run([inferenceInputs]);
-    }
-    catch (err) {
+    } catch (err) {
         console.error(err.message);
         alert(err.message);
         return;
@@ -125,10 +116,10 @@ export async function newImageOnnx() {
 }
 
 
-async function loop_forever() {
+async function loopForever() {
     while (true) {
         await newImageOnnx();
         await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
     }
 }
-loop_forever();
+loopForever();

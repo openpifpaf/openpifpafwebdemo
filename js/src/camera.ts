@@ -89,7 +89,7 @@ export class Camera {
             resolve();
         }));
 
-        return {image_id: this.captureCounter, image: image};
+        return {imageId: this.captureCounter, image: image};
     }
 
     nextCamera() {

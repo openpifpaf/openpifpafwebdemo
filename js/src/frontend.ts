@@ -3,12 +3,12 @@
 import { Camera } from './camera';
 import { Visualization } from './visualization';
 
-let backend_location = '';
+let backendLocation = '';
 // if (document.location.search && document.location.search[0] === '?') {
-//     backend_location = document.location.search.substr(1);
+//     backendLocation = document.location.search.substr(1);
 // }
-if (!backend_location && document.location.hostname === 'vita-epfl.github.io') {
-    backend_location = 'https://vitademo.epfl.ch';
+if (!backendLocation && document.location.hostname === 'vita-epfl.github.io') {
+    backendLocation = 'https://vitademo.epfl.ch';
 }
 
 const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
@@ -17,13 +17,13 @@ let lastProcessing: number = null;
 
 const camera = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
-const feed_link = <HTMLAnchorElement>document.getElementById('feedlink');
+const feedLink = <HTMLAnchorElement>document.getElementById('feedlink');
 const url = new URL(document.location.href);
 
 export async function newImage() {
     const data = await camera.imageData();
 
-    const response = await fetch(backend_location + '/v1/human-poses' + url.search, {
+    const response = await fetch(backendLocation + '/v1/human-poses' + url.search, {
         method: 'post',
         mode: 'cors',
         body: data.image,
@@ -40,23 +40,23 @@ export async function newImage() {
     if (url.searchParams.get('channel') !== pred.channel) {
         url.searchParams.set('channel', pred.channel);
         // document.location.replace(url.toString());
-        feed_link.href = '/v1/feed?channel=' + pred.channel;
-        feed_link.text = pred.channel;
+        feedLink.href = '/v1/feed?channel=' + pred.channel;
+        feedLink.text = pred.channel;
     }
 
     return [data.image, pred];
 }
 
 
-async function loop_forever() {
-    let prev_image_pred = await newImage();
+async function loopForever() {
+    let prevImagePred = await newImage();
     while (true) {
-        let [image_pred, _, __] = await Promise.all([
+        let [imagePred, _, __] = await Promise.all([
             newImage(),
-            vis.draw(prev_image_pred[0], prev_image_pred[1]),
+            vis.draw(prevImagePred[0], prevImagePred[1]),
             new Promise<void>(resolve => requestAnimationFrame(() => resolve())),
         ]);
-        prev_image_pred = image_pred;
+        prevImagePred = imagePred;
     }
 }
-loop_forever();
+loopForever();
