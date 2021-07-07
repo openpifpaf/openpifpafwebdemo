@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vita-epfl/openpifpafwebdemo.git"
+    "url": "git+https://github.com/openpifpaf/openpifpafwebdemo.git"
   },
   "author": "Sven Kreiss",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vita-epfl/openpifpafwebdemo/issues"
+    "url": "https://github.com/openpifpaf/openpifpafwebdemo/issues"
   },
-  "homepage": "https://github.com/vita-epfl/openpifpafwebdemo#readme",
+  "homepage": "https://github.com/openpifpaf/openpifpafwebdemo",
   "dependencies": {
     "@babel/core": "^7.10.3",
     "@types/chai": "^4.2.11",
