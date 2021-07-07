@@ -23,3 +23,6 @@ js/build/
 
 # editor
 .vscode
+
+# OS
+.DS_Store
