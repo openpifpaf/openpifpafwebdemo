@@ -24,11 +24,11 @@ from .signal import Signal
 LOG = logging.getLogger(__name__)
 
 
-async def grep_static(dest, url='http://127.0.0.1:5000'):
+async def grep_static(dest, url='http://127.0.0.1:5000', encoding='utf8'):
     http_client = tornado.httpclient.AsyncHTTPClient()
     response = await http_client.fetch(url)
     out = response.body.decode()
-    with open(dest, 'w') as f:
+    with open(dest, 'w', encoding=encoding) as f:
         f.write(out)
     http_client.close()
 
