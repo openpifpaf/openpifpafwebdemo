@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Sven Kreiss',
     author_email='research@svenkreiss.com',
-    url='https://github.com/vita-epfl/openpifpafwebdemo',
+    url='https://github.com/openpifpaf/openpifpafwebdemo',
     include_package_data=True,
 
     install_requires=[

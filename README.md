@@ -1,13 +1,13 @@
 # openpifpafwebdemo
 
-![Tests](https://github.com/vita-epfl/openpifpafwebdemo/workflows/Tests/badge.svg)
+![Tests](https://github.com/openpifpaf/openpifpafwebdemo/workflows/Tests/badge.svg)
 
 Links:
-[main repository](https://github.com/vita-epfl/openpifpaf),
+[main repository](https://github.com/openpifpaf/openpifpaf),
 [2021 paper](https://arxiv.org/abs/2103.02440) and
 [CVPR2019 paper](http://openaccess.thecvf.com/content_CVPR_2019/html/Kreiss_PifPaf_Composite_Fields_for_Human_Pose_Estimation_CVPR_2019_paper.html).<br />
 Live demo: https://vitademo.epfl.ch<br />
-Serverless live demo: https://vita-epfl.github.io/openpifpafwebdemo/
+Serverless live demo: https://openpifpaf.github.io/openpifpafwebdemo/
 
 
 # Use Locally
@@ -28,7 +28,7 @@ current directory.
 
 __Example:__
 
-<img src="https://github.com/vita-epfl/openpifpafwebdemo/blob/main/docs/wave3.gif" height=250 alt="example image" />
+<img src="https://github.com/openpifpaf/openpifpafwebdemo/blob/main/docs/wave3.gif" height=250 alt="example image" />
 
 
 # Docker

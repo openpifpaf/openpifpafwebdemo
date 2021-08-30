@@ -7,7 +7,7 @@ let backendLocation = '';
 // if (document.location.search && document.location.search[0] === '?') {
 //     backendLocation = document.location.search.substr(1);
 // }
-if (!backendLocation && document.location.hostname === 'vita-epfl.github.io') {
+if (!backendLocation && document.location.hostname === 'openpifpaf.github.io') {
     backendLocation = 'https://vitademo.epfl.ch';
 }
 
