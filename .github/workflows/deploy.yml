@@ -45,8 +45,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -m pip install -e "."
-      - run: npm ci  # install from package-lock.json without modifying it
-      - run: npm run build
       - name: Print environment
         run: |
           python -m pip freeze
