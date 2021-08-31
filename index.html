@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>OpenPifPafWebDemo Serverless</title>
+<meta name="description" content="Interactive web browser based demo of OpenPifPaf.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="static/favicon.ico">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<meta name="apple-mobile-web-app-capable" content="no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="static/style.css?v=0.12.6-post2">
+
+</head>
+<body>
+<header>
+<h2 id="d-title"><a href="/" class="text-muted">
+<img id="d-logo" alt="logo" src="static/logo.svg" />OpenPifPafWebDemo Serverless
+</a></h2>
+</header>
+<main>
+
+<p>
+<b>Experimental demo</b> of a serverless version of OpenPifPaf.
+Only static assets are loaded from the web. All computation happens on
+the client side.
+Currently only shows a representation of the fields without decoding
+the poses. Input image size is 129x97.
+</p>
+<p>
+Only works in landscape mode. Needs access to a camera (use Safari on iOS).
+</p>
+<div id="model-selector">
+
+<input name="model" type="radio" id="selector-resnet18" data-name="resnet18" data-url="static/openpifpaf-resnet18.onnx" />
+<label for="selector-resnet18">ResNet18 (44MB)</label>
+
+<input name="model" type="radio" id="selector-resnet50" data-name="resnet50" data-url="static/openpifpaf-resnet50.onnx" />
+<label for="selector-resnet50">ResNet50 (97MB)</label>
+
+</div>
+<div id="capture">
+<video controls autoplay muted playsinline></video>
+<button class="nextCamera"><i class="fas fa-video"></i></button>
+<button class="screenCapture"><i class="fas fa-screen"></i></button>
+<canvas style="display: none" width=129 height=97></canvas>
+</div>
+<div id="visualization">
+<canvas style="max-width:100%; max-height:98vh;" width=640 height=480></canvas>
+</div>
+<div style="font-size: 200%">
+FPS = <em><span id="fps">0</span></em>
+</div>
+
+</main>
+<footer>
+<a href="https://github.com/openpifpaf/openpifpafwebdemo">Project on Github</a>.
+Created by <a href="https://twitter.com/svenkreiss">@svenkreiss</a>.<br />
+<br />
+Copyright 2019-2021. Created at <a href="https://www.epfl.ch/labs/vita/">VITA lab at EPFL</a>.<br />
+<a href="//www.epfl.ch/about/overview/overview/regulations-and-guidelines/">EPFL Legal</a>.<br />
+<small style="color:#ccc;">v0.12.6-post2</small><br />
+
+<script src="//webrtc.github.io/adapter/adapter-latest.js" type="text/javascript"></script>
+<script>console.log({version: '0.12.6-post2' });</script>
+<script src="static/clientside.js?v=0.12.6-post2"></script>
+
+<!-- This is v0.12.6-post2. -->
+</footer>
+
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-137290484-1"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-137290484-1', { 'anonymize_ip': true });
+</script>
+
+</body>
+</html>
