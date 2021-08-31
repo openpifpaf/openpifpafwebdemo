@@ -125,9 +125,15 @@ jobs:
           name: artifact
           path: gh-pages
 
+      - name: Get ONNX models
+        run: |
+          wget -q https://github.com/openpifpaf/openpifpafwebdemo/releases/download/v0.12.6/openpifpaf-resnet18.onnx
+          wget -q https://github.com/openpifpaf/openpifpafwebdemo/releases/download/v0.12.6/openpifpaf-resnet50.onnx
+          mv *.onnx gh-pages/static/
+
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./gh-pages
+          publish_dir: ./gh-pages/
           force_orphan: true
