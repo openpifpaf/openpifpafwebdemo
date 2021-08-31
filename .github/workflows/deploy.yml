@@ -72,7 +72,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: artifact
-          path: dist
+          path: .
       - run: cp dist/openpifpafwebdemo-*.tar.gz dist/openpifpafwebdemo-latest.tar.gz
       - name: Docker meta
         id: docker_meta
@@ -104,7 +104,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: artifact
-          path: dist
+          path: .
 
       - uses: pypa/gh-action-pypi-publish@master
         with:
@@ -123,7 +123,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: artifact
-          path: gh-pages
+          path: .
 
       - name: Get ONNX models
         run: |
