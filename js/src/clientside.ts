@@ -12,7 +12,7 @@ let captureCounter = 0;
 let fps = 0.0;
 let lastProcessing: number = null;
 
-const c = new Camera(document.getElementById('capture'));
+const camera = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
 vis.markerSize = 10;
 
@@ -83,8 +83,8 @@ export async function newImageOnnx() {
     }
 
     // generate model input
-    const data = await c.imageData();
-    const inferenceInputs = preProcess(c.captureContext);
+    const data = await camera.imageData();
+    const inferenceInputs = preProcess(camera.captureContext);
     const [nBatch, nColors, height, width] = inferenceInputs.dims;
     if (height > width) {
         alert('use landscape mode');
@@ -112,7 +112,7 @@ export async function newImageOnnx() {
     lastProcessing = Date.now();
 
     // process output
-    await drawFields(data.image, output);
+    await drawFields(URL.createObjectURL(data.image), output);
 }
 
 
