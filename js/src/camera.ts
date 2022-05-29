@@ -45,20 +45,24 @@ export class Camera {
                 video: {
                     ...(<MediaTrackConstraints>defaultCapabilities.video),
                     facingMode: this.mode,
-                }
+                },
+                audio: false,
             };
 
             stream = await navigator.mediaDevices.getUserMedia(capabilities);
         } else {
-            // @ts-ignore
-            stream = await navigator.mediaDevices.getDisplayMedia({
+            let capabilities = {
+                ...defaultCapabilities,
                 video: {
+                    ...(<MediaTrackConstraints>defaultCapabilities.video),
                     cursor: 'never',
                     logicalSurface: true,
                     width: this.captureCanvas.width,
                 },
                 audio: false,
-            });
+            };
+
+            stream = await navigator.mediaDevices.getDisplayMedia(capabilities);
         }
         this.video.srcObject = stream;
     }
