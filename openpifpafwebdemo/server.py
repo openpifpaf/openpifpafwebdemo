@@ -46,8 +46,8 @@ def cli():
     openpifpaf.logger.cli(parser)
     openpifpaf.network.Factory.cli(parser)
 
-    parser.add_argument('--disable-cuda', action='store_true',
-                        help='disable CUDA')
+    parser.add_argument('--force-cpu', action='store_true',
+                        help='disable any acceleration that might be available')
     parser.add_argument('--resolution', default=0.4, type=float,
                         help=('Resolution prescale factor from 640x480. '
                               'Will be rounded to multiples of 16.'))
@@ -92,8 +92,12 @@ def cli():
 
     # add args.device
     args.device = torch.device('cpu')
-    if not args.disable_cuda and torch.cuda.is_available():
-        args.device = torch.device('cuda')
+    if not args.force_cpu:
+        if torch.cuda.is_available():
+            args.device = torch.device('cuda')
+        if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+            args.device = torch.device('mps')
+    LOG.info('Using device "%s".', args.device)
 
     return args
 
@@ -124,10 +128,8 @@ def main():
     tornado.autoreload.watch('openpifpafwebdemo/static/clientside.js')
 
     if LOG.getEffectiveLevel() == logging.DEBUG:
-        version = '{}-{}'.format(
-            __version__,
-            ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        )
+        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        version = f'{__version__}-{random_suffix}'
     else:
         version = __version__
 

@@ -36,7 +36,7 @@ class HumanPoses(tornado.web.RequestHandler):
         out_data['channel'] = channel_id
         await self.finish(json.dumps(out_data))
 
-        channel_name = 'channel:{}'.format(channel_id)
+        channel_name = f'channel:{channel_id}'
         LOG.info('publishing to %s', channel_name)
         self.application.signal.emit(channel_name, out_data)
 
