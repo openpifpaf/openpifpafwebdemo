@@ -12,8 +12,8 @@ LOG = logging.getLogger(__name__)
 
 class Feed(tornado.web.RequestHandler):
     async def _event(self, name, data):
-        self.write('event: {}\n'.format(name))
-        self.write('data: {}\n\n'.format(data))
+        self.write(f'event: {name}\n')
+        self.write(f'data: {data}\n\n')
         await self.flush()
 
     async def get(self):
@@ -34,7 +34,7 @@ class Feed(tornado.web.RequestHandler):
             return
         await self._event('channel', channel_id)
 
-        channel_name = 'channel:{}'.format(channel_id)
+        channel_name = f'channel:{channel_id}'
         LOG.info('subscribing to %s', channel_name)
         async for json_data in self.application.signal.subscribe(channel_name):
             try:

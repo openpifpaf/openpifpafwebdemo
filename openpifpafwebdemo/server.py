@@ -128,10 +128,8 @@ def main():
     tornado.autoreload.watch('openpifpafwebdemo/static/clientside.js')
 
     if LOG.getEffectiveLevel() == logging.DEBUG:
-        version = '{}-{}'.format(
-            __version__,
-            ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        )
+        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+        version = f'{__version__}-{random_suffix}'
     else:
         version = __version__
 
