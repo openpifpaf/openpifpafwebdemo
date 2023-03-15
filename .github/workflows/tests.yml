@@ -21,22 +21,22 @@ jobs:
           - os: ubuntu-latest
             python: 3.9
             torch: 1.13.1+cpu
-            torchvision: 1.14.1+cpu
+            torchvision: 0.14.1+cpu
             torch-source: https://download.pytorch.org/whl/cpu/torch_stable.html
           - os: ubuntu-latest
             python: "3.10"
             torch: 1.13.1+cpu
-            torchvision: 1.14.1+cpu
+            torchvision: 0.14.1+cpu
             torch-source: https://download.pytorch.org/whl/cpu/torch_stable.html
           - os: macos-latest
-            python: 3.7
-            torch: 1.7.1
-            torchvision: 0.8.2
+            python: 3.8
+            torch: 1.13.1
+            torchvision: 0.14.1
             torch-source: https://download.pytorch.org/whl/torch_stable.html
           - os: windows-latest
-            python: 3.7
-            torch: 1.7.1+cpu
-            torchvision: 0.8.2+cpu
+            python: 3.8
+            torch: 1.13.1+cpu
+            torchvision: 0.14.1+cpu
             torch-source: https://download.pytorch.org/whl/torch_stable.html
 
     steps:
