@@ -8,7 +8,7 @@
     "build": "webpack",
     "watch": "webpack --watch",
     "test": "tsc && mocha -t 30000 js/build/commonjs/test.js",
-    "lint": "eslint -c .eslintrc.js --ext .ts js/src/"
+    "lint": "eslint -c .eslintrc.cjs --ext .ts js/src/"
   },
   "repository": {
     "type": "git",
