@@ -9,7 +9,7 @@ describe('Server Process', () => {
 
   // spawn the server process
   let envVars = process.env;
-  envVars.PORT = '5002';
+  envVars.PORT = '5003';
   const serverProcess = child_process.spawn('python', [
     '-m', 'openpifpafwebdemo.server',
     '--no-download-progress',
@@ -46,28 +46,28 @@ describe('Server Process', () => {
 
   describe('web interface', () => {
     it('has a working front end page', async function() {
-      const response = await fetch('http://localhost:5002');
+      const response = await fetch(`http://127.0.0.1:${envVars.PORT}`);
       expect(response.status).to.equal(200);
     });
 
     it('serves frontend.js', async function() {
-      const response = await fetch('http://localhost:5002/static/frontend.js');
+      const response = await fetch(`http://127.0.0.1:${envVars.PORT}/static/frontend.js`);
       expect(response.status).to.equal(200);
     });
     it('serves clientside.js', async function() {
-      const response = await fetch('http://localhost:5002/static/clientside.js');
+      const response = await fetch(`http://127.0.0.1:${envVars.PORT}/static/clientside.js`);
       expect(response.status).to.equal(200);
     });
 
     it('can respond to post requests with images', async function() {
       const image = fs.readFileSync('docs/me_nyc_square_500.jpeg');
-      const response = await fetch('http://localhost:5002/v1/human-poses', {
+      const response = await fetch(`http://127.0.0.1:${envVars.PORT}/v1/human-poses`, {
           method: 'post',
           body: image,
       });
       expect(response.status).to.equal(200);
 
-      const data = await response.json();
+      const data = await response.json() as any;
       const scores = data.annotations.map((entry: any) => entry.score);
 
       expect(scores.length).to.equal(1);

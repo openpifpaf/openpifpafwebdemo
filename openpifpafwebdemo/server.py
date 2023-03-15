@@ -10,9 +10,12 @@ import string
 import sys
 
 import torch
+import torch.backends
 import tornado
 import tornado.autoreload
 import tornado.httpclient
+import tornado.ioloop
+import tornado.web
 
 import openpifpaf
 
@@ -24,7 +27,7 @@ from .signal import Signal
 LOG = logging.getLogger(__name__)
 
 
-async def grep_static(dest, url='http://127.0.0.1:5000/client.html', encoding='utf8'):
+async def grep_static(dest, url='http://127.0.0.1:5002/client.html', encoding='utf8'):
     http_client = tornado.httpclient.AsyncHTTPClient()
     response = await http_client.fetch(url)
     out = response.body.decode()
@@ -62,7 +65,7 @@ def cli():
                         default=os.environ.get('HOST', '127.0.0.1'),
                         help='host address for webserver, use 0.0.0.0 for global access')
     parser.add_argument('--port', dest='port',
-                        type=int, default=int(os.environ.get('PORT', 5000)),
+                        type=int, default=int(os.environ.get('PORT', 5002)),
                         help='port for webserver')
 
     ssl_args = parser.add_argument_group('SSL')

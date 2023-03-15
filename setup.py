@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     license='MIT',
     description='Web-browser demo for openpifpaf.',
-    long_description=open('README.md').read(),
+    long_description=open('README.md', encoding='utf8').read(),
     long_description_content_type='text/markdown',
     author='Sven Kreiss',
     author_email='research@svenkreiss.com',
