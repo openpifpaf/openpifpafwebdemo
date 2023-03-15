@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "JavaScript part of OpenPifPafWebDemo.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",

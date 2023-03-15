@@ -11,13 +11,13 @@ if (!backendLocation && document.location.hostname === 'openpifpaf.github.io') {
     backendLocation = 'https://vitademo.epfl.ch';
 }
 
-const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
+const fpsSpan = document.getElementById('fps') as HTMLSpanElement;
 let fps = 0.0;
 let lastProcessing: number = null;
 
 const camera = new Camera(document.getElementById('capture'));
 const vis = new Visualization(document.getElementById('visualization'));
-const feedLink = <HTMLAnchorElement>document.getElementById('feedlink');
+const feedLink = document.getElementById('feedlink') as HTMLAnchorElement;
 const url = new URL(document.location.href);
 
 export async function newImage() {

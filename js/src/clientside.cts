@@ -7,7 +7,7 @@ import * as ndarray from 'ndarray';
 import * as ops from 'ndarray-ops';
 
 
-const fpsSpan = <HTMLSpanElement>document.getElementById('fps');
+const fpsSpan = document.getElementById('fps') as HTMLSpanElement;
 let captureCounter = 0;
 let fps = 0.0;
 let lastProcessing: number = null;
@@ -55,7 +55,7 @@ function preProcess(ctx: CanvasRenderingContext2D): onnx.Tensor {
 // load the ONNX model
 let session = null;
 let modelLoaded = null;
-const modelSelectorDiv = <HTMLDivElement>document.getElementById('model-selector');
+const modelSelectorDiv = document.getElementById('model-selector') as HTMLDivElement;
 function loadModel(modelData: {name: string, url: string}) {
     modelLoaded = null;
 
