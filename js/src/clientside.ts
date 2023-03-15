@@ -102,7 +102,7 @@ export async function newImageOnnx() {
         alert(err.message);
         return;
     }
-    console.log({'nn done': Date.now() - startSession});
+    console.log({nnDone: Date.now() - startSession});
     if (lastProcessing != null) {
         const duration = Date.now() - lastProcessing;
         console.log({duration});
